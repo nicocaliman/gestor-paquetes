@@ -2876,40 +2876,6 @@
       border-radius: 8px !important;
     }
 
-    /* ── Directorio de Clientes: filtro por rol ─────────────────── */
-    .client-role-filter {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-xl);
-      padding: 3px;
-    }
-
-    .client-role-filter__btn {
-      border: none;
-      background: transparent;
-      color: var(--text-secondary);
-      font-family: var(--font-family);
-      font-size: 0.78rem;
-      font-weight: 700;
-      white-space: nowrap;
-      padding: 6px 14px;
-      border-radius: var(--radius-lg);
-      cursor: pointer;
-      transition: background 150ms ease, color 150ms ease;
-    }
-
-    .client-role-filter__btn:hover {
-      color: var(--text-primary);
-    }
-
-    .client-role-filter__btn.active {
-      background: var(--brand-primary);
-      color: #FFFFFF;
-    }
-
     .btn-icon--danger {
       background: rgba(192, 57, 43, 0.14) !important;
       color: #D9695C !important;
@@ -5004,8 +4970,6 @@
             style="width:20px;height:20px"></i></span><span>Info & Rutas</span></button>
       <button class="nav-item" data-view="stats" onclick="window.navigateTo('stats')"><span class="nav-item__icon"><i data-lucide="pie-chart"
             style="width:20px;height:20px"></i></span><span>Analítica de Envíos</span></button>
-      <button class="nav-item" data-view="clients" onclick="window.navigateTo('clients')"><span class="nav-item__icon"><i data-lucide="users"
-            style="width:20px;height:20px"></i></span><span>Directorio de Clientes</span></button>
       <button class="nav-item" data-view="history" onclick="window.navigateTo('history')"><span class="nav-item__icon"><i data-lucide="history"
             style="width:20px;height:20px"></i></span><span>Historial de Cierres</span></button>
     </nav>
@@ -5337,7 +5301,9 @@
           </div>
           <div class="form-group">
             <label class="form-label" for="pkg-loc-dest">Localidad Destinatario <span class="required">*</span></label>
-            <input type="text" id="pkg-loc-dest" class="form-input" placeholder="Ej. Bucarest / Cluj-Napoca" required />
+            <input type="text" id="pkg-loc-dest" class="form-input" placeholder="Ej. Bucarest / Cluj-Napoca"
+              list="localidades-dest-list" required />
+            <datalist id="localidades-dest-list"></datalist>
             <span class="form-error" id="error-loc-dest"></span>
           </div>
         </div>
@@ -5366,7 +5332,9 @@
           </div>
           <div class="form-group">
             <label class="form-label" for="pkg-loc-exp">Localidad Expedidor <span class="required">*</span></label>
-            <input type="text" id="pkg-loc-exp" class="form-input" placeholder="Ej. Madrid / Zaragoza" required />
+            <input type="text" id="pkg-loc-exp" class="form-input" placeholder="Ej. Madrid / Zaragoza"
+              list="localidades-exp-list" required />
+            <datalist id="localidades-exp-list"></datalist>
             <span class="form-error" id="error-loc-exp"></span>
           </div>
         </div>
@@ -5654,6 +5622,19 @@
           <span style="color:#C3BCCF; font-weight:700; white-space:nowrap;">Tarifa aplicada según el tramo de peso.</span>
         </p>
       </div>
+
+      <div class="card">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+          <div style="width:34px; height:34px; border-radius:10px; background:rgba(139, 127, 160, 0.18); border:1.5px solid rgba(139, 127, 160, 0.4); color:#A79DB8; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <i data-lucide="map-pin" style="width:18px;height:18px"></i>
+          </div>
+          <div>
+            <h3 style="font-family:var(--font-heading); font-size:1.05rem; font-weight:800; color:var(--text-primary); margin:0; letter-spacing:-0.02em;">Localidades</h3>
+            <p style="color:#B9C0D4; font-size:0.76rem; font-weight:500; margin:3px 0 0 0;">Sugerencias para Localidad Destinatario/Expedidor en el formulario. Se añaden solas al usar una localidad nueva; bórrala aquí si un nombre quedó mal escrito.</p>
+          </div>
+        </div>
+        <div id="localidades-list-container"></div>
+      </div>
     </section>
 
     <!-- VIEW: INFO & RUTAS -->
@@ -5785,35 +5766,6 @@
         </button>
       </div>
       <div id="stats-charts-container"></div>
-    </section>
-
-    <!-- VIEW: CLIENTS (Clientes Frecuentes) -->
-    <section class="view hidden" id="view-clients" data-view="clients">
-      <div class="view__header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
-        <div>
-          <h1 class="view__title">Directorio de Clientes Frecuentes</h1>
-          <p class="view__subtitle">Busca remitentes y destinatarios habituales</p>
-        </div>
-        <button type="button" class="btn" onclick="window.navigateTo('dashboard')" style="background:#1B2A4A; border:1px solid rgba(255,255,255,0.12); color:#F7F4EC; font-weight:700; font-size:0.86rem; padding:8px 18px; border-radius:10px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; transition:all 0.2s ease; box-shadow:0 2px 8px rgba(0,0,0,0.25);" title="Volver al Resumen de Liquidación" aria-label="Volver al Resumen">
-          <i data-lucide="arrow-left" style="width:16px;height:16px;color:#B9C0D4;"></i>
-          <span>Volver</span>
-        </button>
-      </div>
-      <div class="card" style="margin-bottom: 20px; padding: 24px;">
-        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:20px;">
-          <div class="input-with-badge" style="flex:1;min-width:240px;position:relative;">
-            <svg id="clients-search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-              style="color:#C3BCCF;position:absolute;left:14px;top:50%;transform:translateY(-50%);cursor:pointer;" role="button" tabindex="0" aria-label="Buscar"><path></path></svg>
-            <input type="text" id="clients-search-input" class="form-input" style="padding-left:42px !important;" placeholder="Buscar por nombre o localidad...">
-          </div>
-          <div class="client-role-filter" id="clients-role-filter" role="group" aria-label="Filtrar por rol">
-            <button type="button" class="client-role-filter__btn active" data-role="all">Todos</button>
-            <button type="button" class="client-role-filter__btn" data-role="Destinatario">Destinatarios</button>
-            <button type="button" class="client-role-filter__btn" data-role="Expedidor">Expedidores</button>
-          </div>
-        </div>
-        <div id="clients-table-container"></div>
-      </div>
     </section>
 
     <!-- VIEW: HISTORY (Histórico de Liquidaciones) -->

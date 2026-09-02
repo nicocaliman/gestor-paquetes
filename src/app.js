@@ -60,8 +60,8 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
         if (view === 'dashboard' && typeof renderDashboard === 'function') renderDashboard();
         if (view === 'form' && typeof prepareCreate === 'function') prepareCreate();
         if (view === 'rates' && typeof renderRatesList === 'function') renderRatesList();
+        if (view === 'rates' && typeof renderLocalidadesManager === 'function') renderLocalidadesManager();
         if (view === 'stats' && typeof renderStats === 'function') renderStats();
-        if (view === 'clients' && typeof renderClientsView === 'function') renderClientsView();
         if (view === 'history' && typeof renderHistoryView === 'function') renderHistoryView();
       } catch (err) {
         console.warn('[Navigation Render Warning]:', view, err);
@@ -518,6 +518,8 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
       saveRates: r => { try { localStorage.setItem('nc_caliman_rates_v5', JSON.stringify(r)) } catch (e) { console.error(e) } },
       getClients: () => { try { return JSON.parse(localStorage.getItem('nc_caliman_clients')) || [] } catch { return [] } },
       saveClients: c => { try { localStorage.setItem('nc_caliman_clients', JSON.stringify(c)) } catch (e) { console.error(e) } },
+      getLocalidades: () => { try { return JSON.parse(localStorage.getItem('nc_caliman_localidades')) || [] } catch { return [] } },
+      saveLocalidades: l => { try { localStorage.setItem('nc_caliman_localidades', JSON.stringify(l)) } catch (e) { console.error(e) } },
       getHistory: () => { try { return JSON.parse(localStorage.getItem('nc_caliman_history')) || [] } catch { return [] } },
       saveHistory: h => { try { localStorage.setItem('nc_caliman_history', JSON.stringify(h)) } catch (e) { console.error(e) } }
     };
@@ -1349,6 +1351,7 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
           }
           StorageService.savePackages(pkgs);
           syncClientsFromPackages(pkgs);
+          syncLocalidadesFromForm(data.localidadDestinatario, data.localidadExpedidor);
           if (targetPkg) SupabaseService.savePackage(targetPkg);
           navigateTo('dashboard');
         } finally {
@@ -1552,8 +1555,8 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
         if (view === 'dashboard' && typeof renderDashboard === 'function') renderDashboard();
         if (view === 'form' && !editingId && typeof prepareCreate === 'function') prepareCreate();
         if (view === 'rates' && typeof renderRatesList === 'function') renderRatesList();
+        if (view === 'rates' && typeof renderLocalidadesManager === 'function') renderLocalidadesManager();
         if (view === 'stats' && typeof renderStats === 'function') renderStats();
-        if (view === 'clients' && typeof renderClientsView === 'function') renderClientsView();
         if (view === 'history' && typeof renderHistoryView === 'function') renderHistoryView();
       } catch (err) {
         console.warn('[Navigation Render Warning]:', view, err);
@@ -3159,16 +3162,6 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
     document.getElementById('route-search-input')?.addEventListener('input', (e) => {
       renderRoutesTable(e.target.value, currentRouteDay);
     });
-    document.getElementById('clients-search-input')?.addEventListener('input', () => {
-      renderClientsView();
-    });
-    document.getElementById('clients-role-filter')?.addEventListener('click', (e) => {
-      const btn = e.target.closest('.client-role-filter__btn');
-      if (!btn) return;
-      document.querySelectorAll('.client-role-filter__btn').forEach(b => b.classList.toggle('active', b === btn));
-      renderClientsView();
-    });
-
     // ── Iconos de búsqueda que hacen morph lupa↔X (morphicons) ─────
     // El propio icono de lupa es el botón de limpiar: al escribir se transforma
     // en X con una animación fluida, en vez de un botón aparte que aparece/
@@ -3219,7 +3212,6 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
       }
 
       setupSearchIconMorph({ inputId: 'route-search-input', iconId: 'route-search-icon' });
-      setupSearchIconMorph({ inputId: 'clients-search-input', iconId: 'clients-search-icon' });
     })();
 
     document.getElementById('day-pills-container')?.addEventListener('click', (e) => {
@@ -3675,13 +3667,20 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
       const clients = StorageService.getClients();
       const destList = document.getElementById('destinatarios-list');
       const expList = document.getElementById('expedidores-list');
-      if (!destList || !expList) return;
+      if (destList && expList) {
+        const dests = clients.filter(c => c.role === 'Destinatario' || !c.role);
+        const exps = clients.filter(c => c.role === 'Expedidor' || !c.role);
 
-      const dests = clients.filter(c => c.role === 'Destinatario' || !c.role);
-      const exps = clients.filter(c => c.role === 'Expedidor' || !c.role);
+        destList.innerHTML = dests.map(c => `<option value="${_esc(c.name)}">${_esc(c.city)}</option>`).join('');
+        expList.innerHTML = exps.map(c => `<option value="${_esc(c.name)}">${_esc(c.city)}</option>`).join('');
+      }
 
-      destList.innerHTML = dests.map(c => `<option value="${_esc(c.name)}">${_esc(c.city)}</option>`).join('');
-      expList.innerHTML = exps.map(c => `<option value="${_esc(c.name)}">${_esc(c.city)}</option>`).join('');
+      const localidades = ensureLocalidadesSeeded();
+      const locDestList = document.getElementById('localidades-dest-list');
+      const locExpList = document.getElementById('localidades-exp-list');
+      const localidadesOptions = localidades.map(l => `<option value="${_esc(l)}"></option>`).join('');
+      if (locDestList) locDestList.innerHTML = localidadesOptions;
+      if (locExpList) locExpList.innerHTML = localidadesOptions;
     }
 
     document.getElementById('pkg-dest')?.addEventListener('input', e => {
@@ -3702,153 +3701,82 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
       }
     });
 
-    function renderClientsView() {
-      const container = document.getElementById('clients-table-container');
+    // ── LOCALIDADES MODULE ────────────────────────────────────────
+    // Tabla curada de localidades para sugerir en Localidad Destinatario/Expedidor,
+    // sembrada con las paradas de las rutas ya definidas (Mié/Jue/Vie en Rumanía,
+    // Sáb/Dom en España) en lugar de derivarse del historial de envíos.
+    function getSeedLocalidades() {
+      const seen = new Set();
+      const result = [];
+      [].concat(typeof romaniaRoutes !== 'undefined' ? romaniaRoutes : [], typeof spainRoutes !== 'undefined' ? spainRoutes : [])
+        .forEach(r => {
+          const name = (r.loc || '').trim();
+          const key = name.toLowerCase();
+          if (name && !seen.has(key)) { seen.add(key); result.push(name); }
+        });
+      return result;
+    }
+
+    function ensureLocalidadesSeeded() {
+      let localidades = StorageService.getLocalidades();
+      if (localidades.length === 0) {
+        localidades = getSeedLocalidades();
+        StorageService.saveLocalidades(localidades);
+      }
+      return localidades;
+    }
+
+    function syncLocalidadesFromForm(...values) {
+      const localidades = ensureLocalidadesSeeded();
+      let changed = false;
+      values.forEach(val => {
+        const trimmed = (val || '').trim();
+        if (!trimmed) return;
+        if (!localidades.some(l => l.toLowerCase() === trimmed.toLowerCase())) {
+          localidades.push(trimmed);
+          changed = true;
+        }
+      });
+      if (changed) {
+        StorageService.saveLocalidades(localidades);
+        renderDatalists();
+      }
+    }
+
+    function renderLocalidadesManager() {
+      const container = document.getElementById('localidades-list-container');
       if (!container) return;
 
-      syncClientsFromPackages(StorageService.getPackages());
-      const hasAnyClients = StorageService.getClients().length > 0;
-      let clients = StorageService.getClients();
-      const filter = (document.getElementById('clients-search-input')?.value || '').trim().toLowerCase();
-      const roleFilter = document.querySelector('.client-role-filter__btn.active')?.dataset.role || 'all';
+      const localidades = ensureLocalidadesSeeded().slice().sort((a, b) => a.localeCompare(b));
 
-      if (filter) {
-        clients = clients.filter(c => c.name.toLowerCase().includes(filter) || c.city.toLowerCase().includes(filter));
-      }
-      if (roleFilter !== 'all') {
-        clients = clients.filter(c => (c.role || 'Destinatario') === roleFilter);
-      }
-
-      if (clients.length === 0) {
-        const title = hasAnyClients ? 'Ningún cliente coincide con el filtro' : 'No hay clientes guardados aún';
-        const subtitle = hasAnyClients ? 'Probá con otro nombre, localidad o rol.' : 'Se guardarán automáticamente al crear envíos.';
-        container.innerHTML = `
-          <div class="empty-state" style="margin-top:0; border:none; background:transparent; box-shadow:none; padding:48px 20px;">
-            <div class="empty-state__icon" style="color:var(--text-muted); opacity:0.4; margin-bottom:12px; display:flex; justify-content:center; align-items:center;">
-              <i data-lucide="users" style="width:48px;height:48px;"></i>
-            </div>
-            <h3 style="font-size:1.1rem;font-weight:700;color:var(--text-primary);margin-bottom:6px;text-align:center;">${title}</h3>
-            <p style="font-size:clamp(0.62rem, 2.8vw, 0.85rem);color:var(--text-secondary);white-space:nowrap;margin:0 auto;text-align:center;line-height:1.5;max-width:100%;">${subtitle}</p>
-          </div>
-        `;
-        lucide.createIcons({ nodes: [container] });
+      if (localidades.length === 0) {
+        container.innerHTML = '<div style="padding:16px; color:#B9C0D4; text-align:center; font-size:0.85rem;">No hay localidades guardadas.</div>';
         return;
       }
 
-      let html = `
-        <style>
-          .client-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-            gap: 10px;
-          }
-          .client-card {
-            position: relative;
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-default);
-            border-top: 3px solid var(--client-accent, var(--brand-primary));
-            border-radius: var(--radius-md);
-            padding: 12px 30px 12px 14px;
-            box-shadow: var(--shadow-sm);
-            opacity: 0;
-            transform: scale(0.95);
-            animation: clientCardIn 200ms ease-out forwards;
-            transition: transform 150ms ease-out, border-color 150ms ease, box-shadow 150ms ease-out;
-          }
-          @keyframes clientCardIn { to { opacity: 1; transform: scale(1); } }
-          @media (hover: hover) and (pointer: fine) {
-            .client-card:hover {
-              transform: translateY(-2px);
-              box-shadow: var(--shadow-md);
-              border-color: color-mix(in srgb, var(--brand-primary) 50%, var(--border-default));
-            }
-          }
-          .client-card__name {
-            font-family: var(--font-heading);
-            font-weight: 700;
-            font-size: 0.88rem;
-            color: var(--text-primary);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          }
-          .client-card__city {
-            margin-top: 3px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 0.78rem;
-            color: var(--text-secondary);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          }
-          .client-card__delete {
-            position: absolute;
-            top: 7px;
-            right: 7px;
-            width: 22px;
-            height: 22px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: none;
-            background: transparent;
-            color: var(--text-muted);
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: background 150ms ease, color 150ms ease, transform 150ms ease-out;
-          }
-          .client-card__delete:hover { background: rgba(192, 57, 43, 0.14); color: #D9695C; }
-          .client-card__delete:active { transform: scale(0.9); }
-          @media (prefers-reduced-motion: reduce) {
-            .client-card { animation: none; opacity: 1; transform: none; }
-          }
-        </style>
-        <div class="client-grid">
-          ${clients.map((c, i) => {
-            const isExp = c.role === 'Expedidor';
-            const accentVar = isExp ? 'var(--status-pending-text)' : 'var(--status-transit-text)';
-            const delay = Math.min(i, 15) * 30;
-            return `
-              <div class="client-card" style="--client-accent:${accentVar}; animation-delay:${delay}ms;">
-                <button class="client-card__delete delete-client-btn" data-id="${c.id}" title="Eliminar de la agenda">
-                  <i data-lucide="trash-2" style="width:13px;height:13px"></i>
-                </button>
-                <div class="client-card__name" title="${_esc(c.name)}">${_esc(c.name)}</div>
-                <div class="client-card__city" title="${_esc(c.city)}"><i data-lucide="map-pin" style="width:11px;height:11px;flex-shrink:0;"></i>${_esc(c.city)}</div>
-              </div>
-            `;
-          }).join('')}
+      container.innerHTML = `
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+          ${localidades.map(l => `
+            <span class="badge--city" style="display:inline-flex; align-items:center; gap:6px; padding:6px 8px 6px 12px;">
+              ${_esc(l)}
+              <button type="button" class="action-btn-danger" onclick="window.deleteLocalidad('${l.replace(/'/g, "\\'")}')" title="Eliminar localidad" style="width:22px; height:22px; border-radius:6px; background:rgba(217, 105, 92, 0.12); border:1px solid rgba(217, 105, 92, 0.35); color:#D9695C; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                <i data-lucide="x" style="width:12px;height:12px"></i>
+              </button>
+            </span>
+          `).join('')}
         </div>
       `;
-
-      container.innerHTML = html;
-      lucide.createIcons({ nodes: [container] });
-
-      container.querySelectorAll('.delete-client-btn').forEach(btn => {
-        btn.addEventListener('click', async () => {
-          const id = btn.dataset.id;
-          const client = StorageService.getClients().find(c => c.id === id);
-          if (!client) return;
-
-          const confirmed = await showConfirmModal({
-            title: '¿Eliminar cliente de la agenda?',
-            itemName: `${client.name} (${client.city})`,
-            message: 'Se eliminará de las sugerencias de autocompletado.',
-            confirmText: 'Eliminar Cliente'
-          });
-
-          if (!confirmed) return;
-
-          const updated = StorageService.getClients().filter(c => c.id !== id);
-          StorageService.saveClients(updated);
-          renderClientsView();
-          renderDatalists();
-          EventBus.emit(EV.TOAST, { type: 'info', message: 'Cliente eliminado de la agenda.' });
-        });
-      });
+      if (typeof lucide !== 'undefined') lucide.createIcons({ nodes: [container] });
     }
+    window.renderLocalidadesManager = renderLocalidadesManager;
+
+    window.deleteLocalidad = name => {
+      const updated = ensureLocalidadesSeeded().filter(l => l.toLowerCase() !== name.toLowerCase());
+      StorageService.saveLocalidades(updated);
+      renderLocalidadesManager();
+      renderDatalists();
+      EventBus.emit(EV.TOAST, { type: 'info', message: 'Localidad eliminada de las sugerencias.' });
+    };
 
     // ── HISTORY MODULE ────────────────────────────────────────────
     // El botón #dashboard-archive-btn ya dispara window.closeAndArchiveFinde() por su
