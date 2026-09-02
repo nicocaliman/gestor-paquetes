@@ -541,6 +541,7 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
             client = window.supabase.createClient(url, key);
             subscribeRealtime();
             syncFromCloud();
+            syncHistoryFromCloud();
             syncActivePrompt();
             console.log('%cNC Caliman — Supabase Realtime Conectado', 'color:#14b8a6;font-weight:bold');
             return true;
@@ -564,6 +565,14 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
               message: payload.eventType === 'INSERT' ? '🔔 Sincronización: Nuevo paquete recibido' : '🔔 Sincronización: Datos de la nube actualizados'
             });
             syncFromCloud();
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'history' }, payload => {
+            console.log('[SupabaseRealtimePayload:history]', payload);
+            EventBus.emit(EV.TOAST, {
+              type: 'info',
+              message: '🔔 Sincronización: Histórico de liquidaciones actualizado'
+            });
+            syncHistoryFromCloud();
           })
           .subscribe();
       }
@@ -665,6 +674,84 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
         }
       }
 
+      async function saveHistoryItem(item) {
+        if (!client) return false;
+        try {
+          const row = {
+            id: item.id,
+            datelabel: item.dateLabel,
+            createdat: item.createdAt || new Date().toISOString(),
+            count: item.count,
+            weight: item.weight,
+            money: item.money,
+            packages: item.packages
+          };
+          const { error } = await client.from('history').upsert(row);
+          if (error) console.error('[SupabaseSaveHistoryError]', error);
+          return !error;
+        } catch (err) {
+          console.error('[SupabaseSaveHistoryError]', err);
+          return false;
+        }
+      }
+
+      async function deleteHistoryItem(id) {
+        if (!client) return false;
+        try {
+          const { error } = await client.from('history').delete().eq('id', id);
+          return !error;
+        } catch (err) {
+          console.error('[SupabaseDeleteHistoryError]', err);
+          return false;
+        }
+      }
+
+      async function pushLocalHistoryToCloud() {
+        if (!client) return;
+        const localHistory = StorageService.getHistory();
+        for (const item of localHistory) {
+          await saveHistoryItem(item);
+        }
+      }
+
+      async function syncHistoryFromCloud() {
+        if (!client) return false;
+        try {
+          const { data, error } = await client.from('history').select('*').order('createdat', { ascending: false });
+          if (!error && data) {
+            // Mismo guard que en syncFromCloud: solo migra el histórico local a la nube la
+            // primera vez que este dispositivo se conecta, para no resucitar registros que
+            // ya se borraron desde otro dispositivo.
+            const alreadyMigrated = localStorage.getItem('nc_caliman_history_cloud_migrated') === '1';
+            if (data.length === 0 && !alreadyMigrated) {
+              const localHistory = StorageService.getHistory();
+              if (localHistory.length > 0) {
+                await pushLocalHistoryToCloud();
+              }
+              localStorage.setItem('nc_caliman_history_cloud_migrated', '1');
+              return true;
+            }
+            localStorage.setItem('nc_caliman_history_cloud_migrated', '1');
+
+            const items = data.map(r => ({
+              id: r.id,
+              dateLabel: r.datelabel || '',
+              createdAt: r.createdat || new Date().toISOString(),
+              count: r.count || 0,
+              weight: r.weight || 0,
+              money: r.money || 0,
+              packages: r.packages || []
+            }));
+            StorageService.saveHistory(items);
+            if (typeof renderHistoryView === 'function' && document.getElementById('history-container')) renderHistoryView();
+            return true;
+          }
+        } catch (err) {
+          console.error('[SupabaseSyncHistoryError]', err);
+        }
+        return false;
+      }
+
       // Registra las correcciones que el usuario hace sobre lo que leyó el OCR de Gemini.
       // El agente semanal usa esta tabla para detectar errores recurrentes y afinar el prompt.
       async function logOcrCorrections(entries) {
@@ -757,6 +844,9 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
         syncFromCloud,
         savePackage,
         deletePackage,
+        saveHistoryItem,
+        deleteHistoryItem,
+        syncHistoryFromCloud,
         logOcrCorrections,
         fetchPendingPromptSuggestions,
         applyPromptSuggestion,
@@ -3790,6 +3880,10 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
       StorageService.saveHistory(history);
       StorageService.savePackages([]);
 
+      // Sube el registro archivado a Supabase para que el histórico aparezca también
+      // en los demás dispositivos (antes solo se guardaba en localStorage).
+      await SupabaseService.saveHistoryItem(archivedItem).catch(() => {});
+
       // Borra también en Supabase: sin esto, la próxima sincronización (recarga de
       // página, evento realtime desde otro dispositivo) vuelve a traer estos paquetes
       // de la nube y "revive" la tabla que se acaba de archivar.
@@ -4129,6 +4223,7 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
 
           const updated = history.filter(h => h.id !== id);
           StorageService.saveHistory(updated);
+          await SupabaseService.deleteHistoryItem(id).catch(() => {});
           renderHistoryView();
           EventBus.emit(EV.TOAST, { type: 'info', message: 'Registro histórico eliminado.' });
         });
