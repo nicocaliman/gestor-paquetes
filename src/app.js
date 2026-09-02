@@ -3612,23 +3612,6 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
       }
     });
 
-    function getClientDirectoryStats(pkgs) {
-      const statsByName = {};
-      pkgs.forEach(p => {
-        [p.destinatario, p.expedidor].forEach(rawName => {
-          if (!rawName) return;
-          const key = rawName.trim().toLowerCase();
-          if (!key) return;
-          const s = statsByName[key] || (statsByName[key] = { count: 0, bultos: 0, last: null });
-          s.count += 1;
-          s.bultos += parseInt(p.bultos) || 1;
-          const created = p.createdAt ? new Date(p.createdAt) : null;
-          if (created && !isNaN(created) && (!s.last || created > s.last)) s.last = created;
-        });
-      });
-      return statsByName;
-    }
-
     function renderClientsView() {
       const container = document.getElementById('clients-table-container');
       if (!container) return;
@@ -3662,22 +3645,20 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
         return;
       }
 
-      const statsByName = getClientDirectoryStats(StorageService.getPackages());
-
       let html = `
         <style>
           .client-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 10px;
           }
           .client-card {
             position: relative;
             background: var(--bg-elevated);
             border: 1px solid var(--border-default);
             border-top: 3px solid var(--client-accent, var(--brand-primary));
-            border-radius: var(--radius-lg);
-            padding: 18px 18px 16px;
+            border-radius: var(--radius-md);
+            padding: 12px 30px 12px 14px;
             box-shadow: var(--shadow-sm);
             opacity: 0;
             transform: scale(0.95);
@@ -3692,36 +3673,44 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
               border-color: color-mix(in srgb, var(--brand-primary) 50%, var(--border-default));
             }
           }
-          .client-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
-          .client-card__id { display: flex; align-items: center; gap: 10px; min-width: 0; }
-          .client-card__avatar {
-            flex-shrink: 0;
-            width: 36px; height: 36px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            background: color-mix(in srgb, var(--brand-primary) 16%, transparent);
-            border: 1.5px solid color-mix(in srgb, var(--brand-primary) 55%, transparent);
-            color: var(--brand-primary);
-            font-family: var(--font-heading);
-            font-weight: 700;
-            font-size: 0.95rem;
-          }
           .client-card__name {
             font-family: var(--font-heading);
             font-weight: 700;
-            font-size: 0.98rem;
+            font-size: 0.88rem;
             color: var(--text-primary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
           }
-          .client-card .action-btn-danger { padding: 5px 8px; flex-shrink: 0; }
-          .client-card .action-btn-danger:active { transform: scale(0.97); }
-          .client-card__badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
-          .client-card__divider { border-top: 1px solid var(--border-subtle); margin: 0 0 10px; }
-          .client-card__stats { font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary); }
-          .client-card__stats strong { color: var(--text-primary); font-weight: 700; }
-          .client-card__last { margin-top: 6px; font-size: 0.74rem; color: var(--text-muted); }
+          .client-card__city {
+            margin-top: 3px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .client-card__delete {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: background 150ms ease, color 150ms ease, transform 150ms ease-out;
+          }
+          .client-card__delete:hover { background: rgba(192, 57, 43, 0.14); color: #D9695C; }
+          .client-card__delete:active { transform: scale(0.9); }
           @media (prefers-reduced-motion: reduce) {
             .client-card { animation: none; opacity: 1; transform: none; }
           }
@@ -3729,29 +3718,15 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
         <div class="client-grid">
           ${clients.map((c, i) => {
             const isExp = c.role === 'Expedidor';
-            const s = statsByName[c.name.trim().toLowerCase()] || { count: 0, bultos: 0, last: null };
-            const initial = (c.name.trim()[0] || '?').toUpperCase();
             const accentVar = isExp ? 'var(--status-pending-text)' : 'var(--status-transit-text)';
-            const lastLabel = s.last ? s.last.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Sin envíos registrados';
-            const delay = Math.min(i, 11) * 40;
+            const delay = Math.min(i, 15) * 30;
             return `
               <div class="client-card" style="--client-accent:${accentVar}; animation-delay:${delay}ms;">
-                <div class="client-card__head">
-                  <div class="client-card__id">
-                    <div class="client-card__avatar">${_esc(initial)}</div>
-                    <span class="client-card__name" title="${_esc(c.name)}">${_esc(c.name)}</span>
-                  </div>
-                  <button class="action-btn-danger delete-client-btn" data-id="${c.id}" title="Eliminar de la agenda">
-                    <i data-lucide="trash-2" style="width:14px;height:14px"></i>
-                  </button>
-                </div>
-                <div class="client-card__badges">
-                  <span class="badge--city"><i data-lucide="map-pin" style="width:12px;height:12px;"></i> ${_esc(c.city)}</span>
-                  <span class="${isExp ? 'badge--warning' : 'badge--info'}">${_esc(c.role || 'Cliente')}</span>
-                </div>
-                <div class="client-card__divider"></div>
-                <div class="client-card__stats"><strong>${s.count}</strong> envío${s.count === 1 ? '' : 's'} &nbsp;·&nbsp; <strong>${s.bultos}</strong> bulto${s.bultos === 1 ? '' : 's'}</div>
-                <div class="client-card__last">Último envío: ${lastLabel}</div>
+                <button class="client-card__delete delete-client-btn" data-id="${c.id}" title="Eliminar de la agenda">
+                  <i data-lucide="trash-2" style="width:13px;height:13px"></i>
+                </button>
+                <div class="client-card__name" title="${_esc(c.name)}">${_esc(c.name)}</div>
+                <div class="client-card__city" title="${_esc(c.city)}"><i data-lucide="map-pin" style="width:11px;height:11px;flex-shrink:0;"></i>${_esc(c.city)}</div>
               </div>
             `;
           }).join('')}
