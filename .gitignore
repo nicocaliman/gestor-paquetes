@@ -1,0 +1,11 @@
+node_modules/
+.vercel/
+
+# Directorios internos de herramientas (Claude Code / plugins), no forman parte de la app
+.agents/
+.claude/
+.impeccable/
+
+# Documentos de rutas con posibles datos reales de clientes (no requeridos por la app)
+RUTA DUMINICA.xlsx
+ruta sambata.pdf

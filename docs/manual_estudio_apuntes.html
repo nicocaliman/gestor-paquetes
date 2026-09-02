@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NC Caliman — Manual de Estudio Técnico & Apuntes de Aprendizaje</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@600;700;800;900&family=Fira+Code:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --bg-base: #0B0F19;
+      --bg-surface: #111827;
+      --bg-elevated: #1F2937;
+      --brand-primary: #8B5CF6;
+      --brand-light: #A78BFA;
+      --brand-dark: #7C3AED;
+      --accent-green: #14B8A6;
+      --accent-green-light: #2DD4BF;
+      --accent-amber: #F59E0B;
+      --accent-blue: #3B82F6;
+      --accent-pink: #EC4899;
+      --text-primary: #F9FAFB;
+      --text-secondary: #CBD5E1;
+      --text-muted: #94A3B8;
+      --border-subtle: rgba(139, 92, 246, 0.15);
+      --border-default: rgba(139, 92, 246, 0.35);
+      --border-strong: rgba(139, 92, 246, 0.6);
+      --font-main: 'Inter', sans-serif;
+      --font-heading: 'Outfit', 'Inter', sans-serif;
+      --font-code: 'Fira Code', monospace;
+    }
+
+    [data-theme="light"] {
+      --bg-base: #F8FAFC;
+      --bg-surface: #FFFFFF;
+      --bg-elevated: #F1F5F9;
+      --text-primary: #0F172A;
+      --text-secondary: #334155;
+      --text-muted: #64748B;
+      --border-subtle: rgba(99, 102, 241, 0.2);
+      --border-default: rgba(99, 102, 241, 0.4);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.75;
+      padding: 40px 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV BAR FLOTANTE */
+    .study-nav {
+      position: sticky;
+      top: 20px;
+      z-index: 100;
+      background: rgba(17, 24, 39, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 2px solid var(--border-default);
+      border-radius: 16px;
+      padding: 14px 24px;
+      margin-bottom: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .study-nav__title {
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--brand-light);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .study-nav__links {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+    }
+
+    .nav-pill {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .nav-pill:hover {
+      background: rgba(139, 92, 246, 0.25);
+      color: #FFF;
+      border-color: var(--brand-light);
+    }
+
+    /* CABECERA PRINCIPAL */
+    header.hero-header {
+      text-align: center;
+      padding-bottom: 40px;
+      border-bottom: 2px dashed var(--border-default);
+      margin-bottom: 48px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(20, 184, 166, 0.25));
+      border: 1.5px solid var(--accent-green-light);
+      color: #FFF;
+      padding: 6px 18px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      box-shadow: 0 0 20px rgba(45, 212, 191, 0.2);
+    }
+
+    h1.hero-title {
+      font-family: var(--font-heading);
+      font-size: 2.8rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      background: linear-gradient(135deg, #FFFFFF 0%, var(--brand-light) 50%, var(--accent-green-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 14px;
+    }
+
+    p.hero-subtitle {
+      color: var(--text-secondary);
+      font-size: 1.15rem;
+      max-width: 850px;
+      margin: 0 auto;
+    }
+
+    /* SECCIONES Y TARJETAS */
+    section.module-section {
+      margin-bottom: 64px;
+    }
+
+    .module-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border-default);
+    }
+
+    .module-icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-dark));
+      color: #FFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+      flex-shrink: 0;
+    }
+
+    h2.module-title {
+      font-family: var(--font-heading);
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #FFF;
+      letter-spacing: -0.02em;
+    }
+
+    .content-card {
+      background: var(--bg-surface);
+      border: 2px solid var(--border-default);
+      border-radius: 20px;
+      padding: 32px;
+      margin-bottom: 32px;
+      box-shadow: 0 10px 32px rgba(0,0,0,0.4);
+      position: relative;
+    }
+
+    /* MOCKUPS Y IMÁGENES EMBEBIDAS */
+    .mockup-wrapper {
+      margin: 28px 0;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px solid var(--border-strong);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+      background: #000;
+    }
+
+    .mockup-wrapper img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .mockup-caption {
+      background: #0F172A;
+      padding: 12px 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--brand-light);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* BLOQUES DE CÓDIGO */
+    pre {
+      background: #090D16;
+      border: 1.5px solid var(--border-strong);
+      border-radius: 14px;
+      padding: 22px;
+      overflow-x: auto;
+      font-family: var(--font-code);
+      font-size: 0.88rem;
+      color: #F1F5F9;
+      margin: 20px 0;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+    }
+
+    code {
+      font-family: var(--font-code);
+      background: rgba(139, 92, 246, 0.18);
+      color: var(--brand-light);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .code-comment { color: #64748B; font-style: italic; }
+    .code-keyword { color: #F472B6; font-weight: 700; }
+    .code-func { color: #38BDF8; font-weight: 700; }
+    .code-string { color: #34D399; }
+    .code-num { color: #FBBF24; }
+
+    /* PASOS HIGHLIGHT BOX */
+    .step-box {
+      background: rgba(15, 23, 42, 0.8);
+      border-left: 4px solid var(--brand-primary);
+      border-radius: 0 12px 12px 0;
+      padding: 20px 24px;
+      margin: 20px 0;
+    }
+
+    .step-title {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--brand-light);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--brand-primary);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* NOTAS DE ESTUDIO */
+    .study-note {
+      background: linear-gradient(135deg, rgba(20, 184, 166, 0.1), rgba(15, 23, 42, 0.9));
+      border: 1.5px solid var(--accent-green-light);
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin: 24px 0;
+    }
+
+    .study-note__title {
+      font-family: var(--font-heading);
+      font-weight: 800;
+      color: var(--accent-green-light);
+      font-size: 1.05rem;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* FOOTER */
+    footer.study-footer {
+      border-top: 2px solid var(--border-default);
+      padding-top: 32px;
+      text-align: center;
+      margin-top: 80px;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- BARRA NAVEGACIÓN FLOTANTE -->
+  <nav class="study-nav">
+    <div class="study-nav__title">
+      <i data-lucide="book-open" style="width:22px;height:22px;"></i>
+      <span>Manual de Estudio Técnico</span>
+    </div>
+    <div class="study-nav__links">
+      <a href="#mod-maps" class="nav-pill">1. Google Maps</a>
+      <a href="#mod-ocr" class="nav-pill">2. Escáner OCR</a>
+      <a href="#mod-supabase" class="nav-pill">3. Supabase Cloud</a>
+      <a href="#mod-rates" class="nav-pill">4. Tarifas & Pesos</a>
+      <a href="#mod-design" class="nav-pill">5. Sistema CSS</a>
+      <a href="#mod-reports" class="nav-pill">6. Reportes CSV</a>
+    </div>
+  </nav>
+
+  <!-- HERO HEADER -->
+  <header class="hero-header">
+    <span class="hero-badge"><i data-lucide="sparkles" style="width:16px;height:16px;"></i> Guía de Estudio & Reutilización de Código</span>
+    <h1 class="hero-title">NC Caliman — Apuntes de Ingeniería & Arquitectura Web</h1>
+    <p class="hero-subtitle">Cuaderno de aprendizaje paso a paso para comprender, adaptar y reutilizar todas las características técnicas desarrolladas en tus próximos proyectos.</p>
+  </header>
+
+  <!-- MÓDULO 1: GOOGLE MAPS ANIMADO -->
+  <section class="module-section" id="mod-maps">
+    <div class="module-header">
+      <div class="module-icon-box"><i data-lucide="map-pin"></i></div>
+      <h2 class="module-title">1. Mapa Interactivo Google Maps + Animación LERP del Vehículo</h2>
+    </div>
+
+    <div class="content-card">
+      <p>Este módulo implementa el seguimiento en tiempo real del vehículo de reparto entre España y Rumanía. Incluye cálculo matemático de rumbo (*heading*), animación fluida de fotogramas, conmutador de dirección de ruta y visualización en pantalla completa.</p>
+
+      <!-- MOCKUP VISUAL -->
+      <div class="mockup-wrapper">
+        <img src="./images/google_maps_animation_mockup.png" alt="Mockup Visual de Google Maps con Animación de Vehículo" />
+        <div class="mockup-caption">
+          <i data-lucide="image" style="width:16px;height:16px;"></i> Mockup de Interfaz: Visualización del mapa nocturno con trazado vectorial de ruta y telemetría de posición en tiempo real.
+        </div>
+      </div>
+
+      <div class="step-box">
+        <div class="step-title"><span class="badge-num">1</span> Algoritmo Matemático de Rumbo (Heading / Bearing)</div>
+        <p>Para rotar la dirección del camión según avanza por las curvas de la carretera, usamos trigonometría esférica entre las coordenadas iniciales <code>(lat1, lng1)</code> y finales <code>(lat2, lng2)</code>:</p>
+      </div>
+
+      <pre><code><span class="code-comment">// Cálculo del ángulo de dirección en grados (0° a 360°)</span>
+<span class="code-keyword">function</span> <span class="code-func">calculateHeading</span>(lat1, lng1, lat2, lng2) {
+  <span class="code-keyword">const</span> dLng = (lng2 - lng1) * (Math.PI / <span class="code-num">180</span>);
+  <span class="code-keyword">const</span> lat1Rad = lat1 * (Math.PI / <span class="code-num">180</span>);
+  <span class="code-keyword">const</span> lat2Rad = lat2 * (Math.PI / <span class="code-num">180</span>);
+
+  <span class="code-keyword">const</span> y = Math.<span class="code-func">sin</span>(dLng) * Math.<span class="code-func">cos</span>(lat2Rad);
+  <span class="code-keyword">const</span> x = Math.<span class="code-func">cos</span>(lat1Rad) * Math.<span class="code-func">sin</span>(lat2Rad) -
+            Math.<span class="code-func">sin</span>(lat1Rad) * Math.<span class="code-func">cos</span>(lat2Rad) * Math.<span class="code-func">cos</span>(dLng);
+
+  <span class="code-keyword">const</span> heading = Math.<span class="code-func">atan2</span>(y, x) * (<span class="code-num">180</span> / Math.PI);
+  <span class="code-keyword">return</span> (heading + <span class="code-num">360</span>) % <span class="code-num">360</span>;
+}</code></pre>
+
+      <div class="step-box">
+        <div class="step-title"><span class="badge-num">2</span> Interpolación Lineal (LERP) con requestAnimationFrame</div>
+        <p>Garantiza un movimiento continuo sin tirones a 60 fps en lugar de saltar entre coordenadas fijas:</p>
+      </div>
+
+      <pre><code><span class="code-keyword">let</span> progress = <span class="code-num">0</span>;
+<span class="code-keyword">let</span> currentIndex = <span class="code-num">0</span>;
+
+<span class="code-keyword">function</span> <span class="code-func">animateMarker</span>(marker, routePoints, speed = <span class="code-num">0.015</span>) {
+  <span class="code-keyword">function</span> <span class="code-func">loop</span>() {
+    <span class="code-keyword">if</span> (currentIndex >= routePoints.length - <span class="code-num">1</span>) currentIndex = <span class="code-num">0</span>;
+    <span class="code-keyword">const</span> p1 = routePoints[currentIndex];
+    <span class="code-keyword">const</span> p2 = routePoints[currentIndex + <span class="code-num">1</span>];
+
+    progress += speed;
+    <span class="code-keyword">if</span> (progress >= <span class="code-num">1.0</span>) { progress = <span class="code-num">0</span>; currentIndex++; }
+
+    <span class="code-comment">// LERP de posición</span>
+    <span class="code-keyword">const</span> lat = p1.lat + (p2.lat - p1.lat) * progress;
+    <span class="code-keyword">const</span> lng = p1.lng + (p2.lng - p1.lng) * progress;
+    marker.<span class="code-func">setPosition</span>(<span class="code-keyword">new</span> google.maps.<span class="code-func">LatLng</span>(lat, lng));
+
+    <span class="code-comment">// Actualizar rotación del icono de camión</span>
+    <span class="code-keyword">const</span> heading = <span class="code-func">calculateHeading</span>(p1.lat, p1.lng, p2.lat, p2.lng);
+    marker.<span class="code-func">setIcon</span>({
+      path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+      scale: <span class="code-num">5</span>,
+      fillColor: <span class="code-string">'#8B5CF6'</span>,
+      rotation: heading
+    });
+
+    <span class="code-func">requestAnimationFrame</span>(loop);
+  }
+  <span class="code-func">loop</span>();
+}</code></pre>
+
+      <div class="study-note">
+        <div class="study-note__title"><i data-lucide="lightbulb"></i> Apunte de Reutilización Futura</div>
+        <p>Este mismo motor LERP funciona para cualquier ruta GPS (gpx, geojson, kml) en proyectos de logística, deliveries, juegos en HTML5 o rastreadores de flotas en vivo.</p>
+      </div>
+
+      <div class="step-box">
+        <div class="step-title"><span class="badge-num">3</span> Trazado Real por Carretera con OSRM (rutas locales de España)</div>
+        <p>Las rutas locales de fin de semana (<code>window.LOCAL_ROUTES</code>, en <code>src/data/localRoutes.js</code>) no usan la Directions API de Google, porque esa API no está habilitada en el proyecto — solo la Maps JavaScript API (visualización). En su lugar, el trazado <code>path</code> de cada ruta se calcula una única vez, offline, contra <strong>OSRM</strong> (<em>Open Source Routing Machine</em>, <code>router.project-osrm.org</code>), un motor de rutas gratuito basado en OpenStreetMap que no requiere API key.</p>
+      </div>
+
+      <div class="step-box">
+        <div class="step-title"><span class="badge-num">4</span> Paso 1 — Coordenadas exactas desde Google Maps (DMS → decimal)</div>
+        <p>Cada parada se localiza a mano en Google Maps y se copian sus coordenadas en formato sexagesimal (DMS). Antes de consultar a OSRM hay que convertirlas a grados decimales:</p>
+      </div>
+
+      <pre><code><span class="code-comment">// "40°35'06.8"N 4°07'57.5"W"  →  { lat: 40.585222, lng: -4.132639 }</span>
+<span class="code-keyword">function</span> <span class="code-func">dmsToDecimal</span>(deg, min, sec, sign = <span class="code-num">1</span>) {
+  <span class="code-keyword">return</span> sign * (deg + min / <span class="code-num">60</span> + sec / <span class="code-num">3600</span>);
+}
+<span class="code-comment">// Norte y Este son positivos; Sur y Oeste, negativos.</span>
+<span class="code-keyword">const</span> escorial = {
+  lat: <span class="code-func">dmsToDecimal</span>(<span class="code-num">40</span>, <span class="code-num">35</span>, <span class="code-num">6.8</span>),
+  lng: <span class="code-func">dmsToDecimal</span>(<span class="code-num">4</span>, <span class="code-num">7</span>, <span class="code-num">57.5</span>, <span class="code-num">-1</span>) <span class="code-comment">// W = negativo</span>
+};</code></pre>
+
+      <div class="step-box">
+        <div class="step-title"><span class="badge-num">5</span> Paso 2 — Un tramo real por cada par de paradas consecutivas</div>
+        <p>En vez de pedirle a OSRM toda la ruta con las 11 paradas de golpe (lo que puede reordenar o simplificar el trazado), se calcula <strong>un tramo independiente por cada punto A → punto B</strong>, en el orden real de la ruta, y se van encadenando:</p>
+      </div>
+
+      <pre><code><span class="code-keyword">async</span> <span class="code-keyword">function</span> <span class="code-func">fetchSegment</span>(a, b) {
+  <span class="code-keyword">const</span> url = <span class="code-string">`http://router.project-osrm.org/route/v1/driving/${a.lng},${a.lat};${b.lng},${b.lat}?overview=full&geometries=geojson`</span>;
+  <span class="code-keyword">const</span> data = <span class="code-keyword">await</span> <span class="code-func">fetch</span>(url).<span class="code-func">then</span>(r => r.<span class="code-func">json</span>());
+  <span class="code-comment">// data.routes[0].geometry.coordinates → [ [lng,lat], [lng,lat], ... ]</span>
+  <span class="code-keyword">return</span> data.routes[<span class="code-num">0</span>].geometry.coordinates.<span class="code-func">map</span>(([lng, lat]) => ({ lat, lng }));
+}
+
+<span class="code-comment">// Encadena los tramos en orden, sin duplicar el punto de union</span>
+<span class="code-keyword">let</span> fullPath = [];
+<span class="code-keyword">for</span> (<span class="code-keyword">let</span> i = <span class="code-num">0</span>; i < paradas.length - <span class="code-num">1</span>; i++) {
+  <span class="code-keyword">const</span> tramo = <span class="code-keyword">await</span> <span class="code-func">fetchSegment</span>(paradas[i], paradas[i + <span class="code-num">1</span>]);
+  <span class="code-keyword">if</span> (fullPath.length > <span class="code-num">0</span>) tramo.<span class="code-func">shift</span>(); <span class="code-comment">// el ultimo punto del tramo anterior == el primero de este</span>
+  fullPath = fullPath.<span class="code-func">concat</span>(tramo);
+}
+<span class="code-comment">// fullPath queda listo para asignarse a LOCAL_ROUTES['es-Sabado'].path</span></code></pre>
+
+      <div class="step-box">
+        <div class="step-title"><span class="badge-num">6</span> Vía-puntos explícitos cuando la ruta "óptima" no es la real</div>
+        <p>Primera versión: OSRM unió Alpedrete → San Rafael en línea "óptima" (26,5 km) usando la autopista de peaje AP-6. Pero la ruta real del repartidor evita peajes y pasa por Guadarrama y el <strong>Puerto de Alto de León</strong> (N-VI, gratuita). La solución no es un flag de "sin peajes" — el servidor público de OSRM no lo soporta — sino forzar el tramo dividiéndolo en dos, insertando la coordenada de Guadarrama como <em>vía-punto de paso</em> (mismo lugar que la parada 2, pero sin marcador ni hora, solo para guiar el trazado):</p>
+      </div>
+
+      <pre><code><span class="code-comment">// Antes: 1 tramo directo (26,5 km) -&gt; usaba la AP-6 de peaje</span>
+<span class="code-comment">// Después: 2 tramos encadenados a traves de Guadarrama (22,1 km, sin peaje)</span>
+<span class="code-keyword">const</span> paradas = [
+  <span class="code-comment">// ...Alpedrete,</span>
+  { lat: <span class="code-num">40.6755</span>, lng: <span class="code-num">-4.089861</span> }, <span class="code-comment">// Guadarrama otra vez, solo de paso</span>
+  <span class="code-comment">// San Rafael...</span>
+];</code></pre>
+
+      <div class="step-box">
+        <div class="step-title"><span class="badge-num">7</span> El mismo patron se repitio: El Espinar -&gt; Los Arroyos</div>
+        <p>Auditoria posterior: recorrer los nombres de via (<code>step.name</code> en la respuesta de OSRM) de cada tramo en busca de <code>"Autopista del Noroeste"</code> (el nombre OSM de la AP-6) encontro un segundo tramo con el mismo problema. La vuelta real del repartidor es El Espinar -&gt; San Rafael -&gt; Alto de Leon -&gt; A-6 -&gt; Los Arroyos, asi que se repite la tecnica: dos vias-punto de paso mas (San Rafael y Guadarrama, sin marcador propio) entre las paradas 7 y 8.</p>
+      </div>
+
+
+      <div class="study-note">
+        <div class="study-note__title"><i data-lucide="lightbulb"></i> Apunte de Reutilización Futura</div>
+        <p>Un motor de rutas siempre optimiza por distancia o tiempo, nunca conoce las preferencias reales del conductor (evitar peajes, calles concretas, etc.). Cuando el trazado automático no coincide con la ruta real, la solución más simple y fiable es <strong>forzar un vía-punto conocido</strong> (una parada, una rotonda, un puerto de montaña) partiendo ese tramo en dos llamadas a la API en vez de complicar los parámetros de la consulta.</p>
+      </div>
+
+      <div class="mockup-wrapper">
+        <img src="./images/ruta_sabado_osrm_mapa.jpg" alt="Mapa con la ruta del sabado calculada por OSRM y las 11 paradas alineadas sobre el trazado" />
+        <div class="mockup-caption">
+          <i data-lucide="image" style="width:16px;height:16px;"></i> Ruta de España del sábado renderizada en Google Maps: línea verde = trazado OSRM (4.330 puntos, 137,3 km), círculos rojos = las 11 paradas, ahora exactamente sobre la carretera.
+        </div>
+      </div>
+
+      <div class="mockup-wrapper">
+        <img src="./images/ruta_sabado_osrm_detalle.jpg" alt="Detalle del Puerto de Alto de Leon, la carretera libre de peaje entre Guadarrama y San Rafael" />
+        <div class="mockup-caption">
+          <i data-lucide="image" style="width:16px;height:16px;"></i> Zoom sobre el Puerto de Alto de León (también llamado Alto de los Leones): la N-VI gratuita que usa el repartidor en vez de la AP-6 de peaje.
+        </div>
+      </div>
+
+      <div class="step-box">
+        <div class="step-title"><span class="badge-num">8</span> Paradas de la ruta "España · Sábado" (11 puntos, en orden)</div>
+        <p>Tabla final tras alinear <code>stops</code> (los marcadores con hora) con <code>path</code> (el trazado): mismas coordenadas exactas en ambos, mismo orden.</p>
+      </div>
+
+      <div style="overflow-x:auto; margin:20px 0;">
+        <table style="width:100%; border-collapse:collapse; font-size:0.92rem;">
+          <thead>
+            <tr style="background:rgba(139,92,246,0.12); text-align:left;">
+              <th style="padding:10px 14px; border-bottom:2px solid var(--border-default); color:var(--brand-light);">#</th>
+              <th style="padding:10px 14px; border-bottom:2px solid var(--border-default); color:var(--brand-light);">Parada</th>
+              <th style="padding:10px 14px; border-bottom:2px solid var(--border-default); color:var(--brand-light);">Hora</th>
+              <th style="padding:10px 14px; border-bottom:2px solid var(--border-default); color:var(--brand-light);">Lat</th>
+              <th style="padding:10px 14px; border-bottom:2px solid var(--border-default); color:var(--brand-light);">Lng</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border-subtle);"><td style="padding:9px 14px; color:var(--text-muted);">1</td><td style="padding:9px 14px;">Escorial</td><td style="padding:9px 14px; color:var(--text-secondary);">12:30</td><td style="padding:9px 14px; color:var(--text-secondary);">40.585222</td><td style="padding:9px 14px; color:var(--text-secondary);">-4.132639</td></tr>
+            <tr style="border-bottom:1px solid var(--border-subtle);"><td style="padding:9px 14px; color:var(--text-muted);">2</td><td style="padding:9px 14px;">Guadarrama</td><td style="padding:9px 14px; color:var(--text-secondary);">13:30</td><td style="padding:9px 14px; color:var(--text-secondary);">40.674972</td><td style="padding:9px 14px; color:var(--text-secondary);">-4.089278</td></tr>
+            <tr style="border-bottom:1px solid var(--border-subtle);"><td style="padding:9px 14px; color:var(--text-muted);">3</td><td style="padding:9px 14px;">Los Molinos</td><td style="padding:9px 14px; color:var(--text-secondary);">14:00</td><td style="padding:9px 14px; color:var(--text-secondary);">40.711722</td><td style="padding:9px 14px; color:var(--text-secondary);">-4.075667</td></tr>
+            <tr style="border-bottom:1px solid var(--border-subtle);"><td style="padding:9px 14px; color:var(--text-muted);">4</td><td style="padding:9px 14px;">Collado Mediano</td><td style="padding:9px 14px; color:var(--text-secondary);">14:30</td><td style="padding:9px 14px; color:var(--text-secondary);">40.693028</td><td style="padding:9px 14px; color:var(--text-secondary);">-4.035333</td></tr>
+            <tr style="border-bottom:1px solid var(--border-subtle);"><td style="padding:9px 14px; color:var(--text-muted);">5</td><td style="padding:9px 14px;">Alpedrete</td><td style="padding:9px 14px; color:var(--text-secondary);">15:30</td><td style="padding:9px 14px; color:var(--text-secondary);">40.657111</td><td style="padding:9px 14px; color:var(--text-secondary);">-4.024667</td></tr>
+            <tr style="border-bottom:1px solid var(--border-subtle);"><td style="padding:9px 14px; color:var(--text-muted);">6</td><td style="padding:9px 14px;">San Rafael</td><td style="padding:9px 14px; color:var(--text-secondary);">16:00</td><td style="padding:9px 14px; color:var(--text-secondary);">40.714361</td><td style="padding:9px 14px; color:var(--text-secondary);">-4.189250</td></tr>
+            <tr style="border-bottom:1px solid var(--border-subtle);"><td style="padding:9px 14px; color:var(--text-muted);">7</td><td style="padding:9px 14px;">El Espinar</td><td style="padding:9px 14px; color:var(--text-secondary);">16:30</td><td style="padding:9px 14px; color:var(--text-secondary);">40.715306</td><td style="padding:9px 14px; color:var(--text-secondary);">-4.245806</td></tr>
+            <tr style="border-bottom:1px solid var(--border-subtle);"><td style="padding:9px 14px; color:var(--text-muted);">8</td><td style="padding:9px 14px;">Los Arroyos</td><td style="padding:9px 14px; color:var(--text-secondary);">17:30</td><td style="padding:9px 14px; color:var(--text-secondary);">40.602500</td><td style="padding:9px 14px; color:var(--text-secondary);">-4.058833</td></tr>
+            <tr style="border-bottom:1px solid var(--border-subtle);"><td style="padding:9px 14px; color:var(--text-muted);">9</td><td style="padding:9px 14px;">Villanueva del Pardillo</td><td style="padding:9px 14px; color:var(--text-secondary);">18:30</td><td style="padding:9px 14px; color:var(--text-secondary);">40.492056</td><td style="padding:9px 14px; color:var(--text-secondary);">-3.962694</td></tr>
+            <tr style="border-bottom:1px solid var(--border-subtle);"><td style="padding:9px 14px; color:var(--text-muted);">10</td><td style="padding:9px 14px;">Valdemorillo</td><td style="padding:9px 14px; color:var(--text-secondary);">19:00</td><td style="padding:9px 14px; color:var(--text-secondary);">40.499639</td><td style="padding:9px 14px; color:var(--text-secondary);">-4.059917</td></tr>
+            <tr><td style="padding:9px 14px; color:var(--text-muted);">11</td><td style="padding:9px 14px;">Colmenarejo</td><td style="padding:9px 14px; color:var(--text-secondary);">19:30</td><td style="padding:9px 14px; color:var(--text-secondary);">40.562889</td><td style="padding:9px 14px; color:var(--text-secondary);">-4.014806</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.88rem; margin-top:-8px;">Distancia total: 137,57 km · Tiempo estimado: 173 min · Trazado: 4.616 puntos de carretera (v13: Valdemorillo-&gt;Colmenarejo ahora gira a la izquierda en Calle San Juan hacia la Carretera de Colmenarejo, como confirmo el usuario).</p>
+
+      <div class="study-note">
+        <div class="study-note__title"><i data-lucide="lightbulb"></i> Apunte de Reutilización Futura</div>
+        <p>El bug real que motivó este trabajo: <code>stops</code> (los marcadores con hora) y <code>path</code> (la polyline) son dos arrays independientes — si se actualiza uno sin el otro, los marcadores quedan "flotando" lejos de la línea aunque el trazado en sí sea perfecto. Al reutilizar este patrón en otro proyecto, mantén siempre <code>stops</code> y los extremos de cada tramo de <code>path</code> generados a partir de <strong>las mismas coordenadas exactas</strong>, y evita mezclar en la misma lista paradas de la ruta con puntos que pertenecen a otro recorrido (en este caso, entregas a domicilio sueltas que no siguen la ruta principal).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MÓDULO 2: ESCÁNER OCR CON TESSERACT.JS -->
+  <section class="module-section" id="mod-ocr">
+    <div class="module-header">
+      <div class="module-icon-box"><i data-lucide="scan-line"></i></div>
+      <h2 class="module-title">2. Escáner OCR de Formulario (Tesseract.js + Canvas API)</h2>
+    </div>
+
+    <div class="content-card">
+      <p>Permite digitalizar automáticamente formularios manuscritos o impresos mediante la cámara del móvil o archivo de imagen, procesando la escena con filtros binarizados en HTML5 Canvas.</p>
+
+      <!-- MOCKUP VISUAL -->
+      <div class="mockup-wrapper">
+        <img src="./images/ocr_scanner_mockup.png" alt="Mockup Visual de Escáner OCR" />
+        <div class="mockup-caption">
+          <i data-lucide="image" style="width:16px;height:16px;"></i> Mockup de Interfaz: Módulo de escaneo con marco de guiado láser y tarjetas de resultados en glassmorphism.
+        </div>
+      </div>
+
+      <div class="step-box">
+        <div class="step-title"><span class="badge-num">1</span> Captura de Video y Binarización en Canvas</div>
+        <p>Convertimos el fotograma a blanco/negro de alto contraste para maximizar la tasa de éxito de Tesseract OCR:</p>
+      </div>
+
+      <pre><code><span class="code-keyword">function</span> <span class="code-func">processCanvasFrame</span>(videoEl, canvasEl) {
+  <span class="code-keyword">const</span> ctx = canvasEl.<span class="code-func">getContext</span>(<span class="code-string">'2d'</span>);
+  canvasEl.width = videoEl.videoWidth;
+  canvasEl.height = videoEl.videoHeight;
+  ctx.<span class="code-func">drawImage</span>(videoEl, <span class="code-num">0</span>, <span class="code-num">0</span>);
+
+  <span class="code-keyword">const</span> imgData = ctx.<span class="code-func">getImageData</span>(<span class="code-num">0</span>, <span class="code-num">0</span>, canvasEl.width, canvasEl.height);
+  <span class="code-keyword">const</span> data = imgData.data;
+
+  <span class="code-keyword">for</span> (<span class="code-keyword">let</span> i = <span class="code-num">0</span>; i < data.length; i += <span class="code-num">4</span>) {
+    <span class="code-keyword">const</span> avg = (data[i] * <span class="code-num">0.299</span> + data[i+<span class="code-num">1</span>] * <span class="code-num">0.587</span> + data[i+<span class="code-num">2</span>] * <span class="code-num">0.114</span>);
+    <span class="code-keyword">const</span> val = avg > <span class="code-num">125</span> ? <span class="code-num">255</span> : <span class="code-num">0</span>; <span class="code-comment">// Binarización</span>
+    data[i] = data[i+<span class="code-num">1</span>] = data[i+<span class="code-num">2</span>] = val;
+  }
+  ctx.<span class="code-func">putImageData</span>(imgData, <span class="code-num">0</span>, <span class="code-num">0</span>);
+  <span class="code-keyword">return</span> canvasEl.<span class="code-func">toDataURL</span>(<span class="code-string">'image/png'</span>);
+}</code></pre>
+    </div>
+  </section>
+
+  <!-- MÓDULO 3: PERSISTENCIA HYBRID SUPABASE -->
+  <section class="module-section" id="mod-supabase">
+    <div class="module-header">
+      <div class="module-icon-box"><i data-lucide="cloud"></i></div>
+      <h2 class="module-title">3. Persistencia Híbrida Offline-First + Supabase Realtime</h2>
+    </div>
+
+    <div class="content-card">
+      <p>Garantiza respuesta de interfaz en 0ms guardando localmente en `LocalStorage` y emitiendo los datos vía WebSockets a PostgreSQL en Supabase.</p>
+
+      <pre><code><span class="code-comment">// Suscripción Realtime WebSockets</span>
+supabase.<span class="code-func">channel</span>(<span class="code-string">'public:packages'</span>)
+  .<span class="code-func">on</span>(<span class="code-string">'postgres_changes'</span>, { event: <span class="code-string">'*'</span>, schema: <span class="code-string">'public'</span>, table: <span class="code-string">'packages'</span> }, (payload) => {
+    <span class="code-keyword">if</span> (payload.eventType === <span class="code-string">'INSERT'</span> || payload.eventType === <span class="code-string">'UPDATE'</span>) {
+      <span class="code-func">saveLocalPackage</span>(payload.new);
+    }
+    <span class="code-func">updateUI</span>();
+  })
+  .<span class="code-func">subscribe</span>();</code></pre>
+
+      <!-- MOCKUP VISUAL -->
+      <div class="mockup-wrapper">
+        <img src="./images/dashboard_kpi_mockup.png" alt="Mockup Visual de Dashboard KPI" />
+        <div class="mockup-caption">
+          <i data-lucide="image" style="width:16px;height:16px;"></i> Mockup de Interfaz: Panel Principal de Liquidación con tarjetas KPI y tabla sincronizada en tiempo real.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MÓDULO 4: CALCULADORA TARIFAS -->
+  <section class="module-section" id="mod-rates">
+    <div class="module-header">
+      <div class="module-icon-box"><i data-lucide="calculator"></i></div>
+      <h2 class="module-title">4. Motor de Cálculo de Tarifas por Tramos de Peso</h2>
+    </div>
+
+    <div class="content-card">
+      <pre><code><span class="code-keyword">function</span> <span class="code-func">calculatePrice</span>(weight, rates) {
+  <span class="code-keyword">const</span> tier = rates.<span class="code-func">find</span>(r => weight >= r.minWeight && (r.maxWeight === <span class="code-keyword">null</span> || weight <= r.maxWeight));
+  <span class="code-keyword">if</span> (!tier) <span class="code-keyword">return</span> weight * <span class="code-num">1.20</span>;
+  <span class="code-keyword">return</span> tier.type === <span class="code-string">'fixed'</span> ? tier.price : weight * tier.price;
+}</code></pre>
+    </div>
+  </section>
+
+  <!-- MÓDULO 5: SISTEMA CSS Y TIPOGRAFÍA -->
+  <section class="module-section" id="mod-design">
+    <div class="module-header">
+      <div class="module-icon-box"><i data-lucide="type"></i></div>
+      <h2 class="module-title">5. Sistema de Diseño CSS & Tipografía Fluida</h2>
+    </div>
+
+    <div class="content-card">
+      <pre><code>:root {
+  --font-heading: <span class="code-string">'Outfit', 'Inter', sans-serif</span>;
+  --font-mono: <span class="code-string">'Fira Code', monospace</span>;
+  --text-2xl: clamp(<span class="code-string">1.4rem, 1.25rem + 0.75vw, 1.65rem</span>);
+}
+
+.price-tag, .cell-weight, .cell-bultos, .stat-card__value {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums lining-nums;
+}</code></pre>
+    </div>
+  </section>
+
+  <!-- MÓDULO 6: REPORTES CSV -->
+  <section class="module-section" id="mod-reports">
+    <div class="module-header">
+      <div class="module-icon-box"><i data-lucide="download"></i></div>
+      <h2 class="module-title">6. Generación de Reportes CSV (Blob API UTF-8 BOM)</h2>
+    </div>
+
+    <div class="content-card">
+      <pre><code><span class="code-keyword">function</span> <span class="code-func">exportCSV</span>(data) {
+  <span class="code-keyword">const</span> csv = <span class="code-string">'\uFEFF'</span> + data.<span class="code-func">map</span>(row => row.<span class="code-func">join</span>(<span class="code-string">','</span>)).<span class="code-func">join</span>(<span class="code-string">'\n'</span>);
+  <span class="code-keyword">const</span> blob = <span class="code-keyword">new</span> <span class="code-func">Blob</span>([csv], { type: <span class="code-string">'text/csv;charset=utf-8;'</span> });
+  <span class="code-keyword">const</span> link = document.<span class="code-func">createElement</span>(<span class="code-string">'a'</span>);
+  link.href = URL.<span class="code-func">createObjectURL</span>(blob);
+  link.download = <span class="code-string">'liquidacion.csv'</span>;
+  link.<span class="code-func">click</span>();
+}</code></pre>
+    </div>
+  </section>
+
+  <!-- MÓDULO 7: GENERACIÓN PDF VECTORIAL Y ENVÍO POR CORREO -->
+  <section class="module-section" id="mod-email-pdf">
+    <div class="module-header">
+      <div class="module-icon-box"><i data-lucide="mail"></i></div>
+      <h2 class="module-title">7. Generación de Albaranes PDF Vectoriales y Envío Transaccional por Email</h2>
+    </div>
+
+    <div class="content-card">
+      <p style="color:var(--text-secondary); margin-bottom:18px;">
+        Este módulo implementa la fase completa de generación del <strong>Albarán Oficial A4 en PDF</strong> y su envío automático por correo electrónico mediante la API de Resend y funciones Serverless de Vercel.
+      </p>
+
+      <h3 style="color:#FFF; font-size:1.1rem; margin-top:20px; margin-bottom:10px;">Paso 1: Umbralizado de Logotipo en Negro Puro & Preservación de Aspect Ratio</h3>
+      <p style="color:var(--text-secondary); font-size:0.92rem; margin-bottom:12px;">
+        Para evitar logos tenues o achatados en el PDF, la función <code>imageToDataURL</code> analiza los píxeles del lienzo HTML5, fuerza cada píxel no transparente a negro sólido 100% (<code>RGB 0,0,0</code>) y calcula dinámicamente el ratio de aspecto original (<code>w / h</code>):
+      </p>
+      <pre><code><span class="code-keyword">function</span> <span class="code-func">imageToDataURL</span>(url, forceBlack = <span class="code-keyword">false</span>) {
+  <span class="code-keyword">return</span> <span class="code-keyword">new</span> <span class="code-func">Promise</span>((resolve) => {
+    <span class="code-keyword">const</span> img = <span class="code-keyword">new</span> Image();
+    img.crossOrigin = <span class="code-string">'Anonymous'</span>;
+    img.onload = () => {
+      <span class="code-keyword">const</span> canvas = document.<span class="code-func">createElement</span>(<span class="code-string">'canvas'</span>);
+      <span class="code-keyword">const</span> w = img.naturalWidth || img.width;
+      <span class="code-keyword">const</span> h = img.naturalHeight || img.height;
+      canvas.width = w; canvas.height = h;
+      <span class="code-keyword">const</span> ctx = canvas.<span class="code-func">getContext</span>(<span class="code-string">'2d'</span>);
+      ctx.<span class="code-func">drawImage</span>(img, <span class="code-num">0</span>, <span class="code-num">0</span>);
+
+      <span class="code-keyword">if</span> (forceBlack) {
+        <span class="code-keyword">const</span> imgData = ctx.<span class="code-func">getImageData</span>(<span class="code-num">0</span>, <span class="code-num">0</span>, w, h);
+        <span class="code-keyword">const</span> data = imgData.data;
+        <span class="code-keyword">for</span> (<span class="code-keyword">let</span> i = <span class="code-num">0</span>; i < data.length; i += <span class="code-num">4</span>) {
+          <span class="code-keyword">if</span> (data[i + <span class="code-num">3</span>] > <span class="code-num">20</span>) {
+            data[i] = <span class="code-num">0</span>; data[i + <span class="code-num">1</span>] = <span class="code-num">0</span>; data[i + <span class="code-num">2</span>] = <span class="code-num">0</span>; data[i + <span class="code-num">3</span>] = <span class="code-num">255</span>;
+          }
+        }
+        ctx.<span class="code-func">putImageData</span>(imgData, <span class="code-num">0</span>, <span class="code-num">0</span>);
+      }
+      resolve({ dataUrl: canvas.<span class="code-func">toDataURL</span>(<span class="code-string">'image/png'</span>), ratio: w / h });
+    };
+    img.src = url;
+  });
+}</code></pre>
+
+      <h3 style="color:#FFF; font-size:1.1rem; margin-top:24px; margin-bottom:10px;">Paso 2: Renderizado Vectorial A4 con jsPDF y Espaciado de Seguridad</h3>
+      <p style="color:var(--text-secondary); font-size:0.92rem; margin-bottom:12px;">
+        La función <code>generateAlbaranPDFBase64()</code> dibuja las secciones con primitivas vectoriales (<code>doc.rect</code>, <code>doc.text</code>), aplicando separaciones de <code>2.5mm</code> entre barras de título y tablas, y renderiza el código QR en un recuadro blanco puro sin solapamiento:
+      </p>
+      <pre><code><span class="code-comment">// Renderizado del Logo con Ratio Natural Perfecto</span>
+<span class="code-keyword">const</span> logoHeight = <span class="code-num">14.5</span>; <span class="code-comment">// mm</span>
+<span class="code-keyword">const</span> logoWidth = logoHeight * logoObj.ratio;
+doc.<span class="code-func">addImage</span>(logoObj.dataUrl, <span class="code-string">'PNG'</span>, <span class="code-num">14</span>, <span class="code-num">10</span>, logoWidth, logoHeight);
+
+<span class="code-comment">// Separación de Secciones (2.5mm de margen limpio tras titular)</span>
+y += <span class="code-num">8.5</span>;
+
+<span class="code-comment">// Cuadro de Código QR 1:1 en Fondo Blanco Puro</span>
+doc.<span class="code-func">setFillColor</span>(<span class="code-num">255</span>, <span class="code-num">255</span>, <span class="code-num">255</span>);
+doc.<span class="code-func">rect</span>(<span class="code-num">161</span>, y, <span class="code-num">35</span>, <span class="code-num">25</span>, <span class="code-string">'FD'</span>);
+doc.<span class="code-func">addImage</span>(qrDataUrl, <span class="code-string">'PNG'</span>, <span class="code-num">171.25</span>, y + <span class="code-num">1.5</span>, <span class="code-num">14.5</span>, <span class="code-num">14.5</span>);
+doc.<span class="code-func">text</span>(<span class="code-string">'VERIFICACIÓN DIGITAL'</span>, <span class="code-num">178.5</span>, y + <span class="code-num">19.4</span>, { align: <span class="code-string">'center'</span> });</code></pre>
+
+      <h3 style="color:#FFF; font-size:1.1rem; margin-top:24px; margin-bottom:12px;">Mockup Explicativo: Recepción del Albarán en la Bandeja de Entrada</h3>
+      <div style="background:#0F172A; border:2px solid var(--border-default); border-radius:14px; padding:20px; margin-top:14px; color:#F8FAFC;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px; margin-bottom:16px;">
+          <div>
+            <div style="font-weight:800; font-size:1rem; color:#A78BFA;">📦 NC Caliman Logistics &lt;onboarding@resend.dev&gt;</div>
+            <div style="font-size:0.85rem; color:#94A3B8; margin-top:2px;">Para: transporte@caliman-logistics.com</div>
+          </div>
+          <span style="background:rgba(16,185,129,0.2); color:#34D399; font-size:0.75rem; font-weight:800; padding:4px 10px; border-radius:6px;">ENVIADO VÍA RESEND API</span>
+        </div>
+
+        <div style="font-size:0.95rem; font-weight:700; color:#FFF; margin-bottom:10px;">
+          Asunto: 📦 Albarán de Liquidación Caliman — 7 envíos (640.00 €)
+        </div>
+
+        <div style="background:#1E293B; border-radius:10px; padding:16px; margin-bottom:16px; border:1px solid rgba(255,255,255,0.08);">
+          <div style="font-size:0.85rem; color:#CBD5E1; line-height:1.5;">
+            Adjuntamos a este correo el <strong>Albarán Oficial de Liquidación en PDF</strong> (documento A4 completo de transporte con logo nítido en negro y QR escaneable) y la hoja de datos en CSV para contabilidad.
+          </div>
+        </div>
+
+        <div style="font-size:0.8rem; font-weight:800; color:#94A3B8; text-transform:uppercase; margin-bottom:8px; letter-spacing:0.05em;">Archivos Adjuntos Transaccionales (2):</div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:10px;">
+          <div style="background:#1F2937; border:1px solid #4F46E5; border-radius:10px; padding:12px; display:flex; align-items:center; gap:12px;">
+            <div style="background:#4F46E5; color:#FFF; width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:0.8rem;">PDF</div>
+            <div>
+              <div style="font-size:0.84rem; font-weight:700; color:#FFF;">Albaran_LIQ-2026-0814.pdf</div>
+              <div style="font-size:0.72rem; color:#94A3B8;">15.4 KB · Documento Vectorial A4</div>
+            </div>
+          </div>
+
+          <div style="background:#1F2937; border:1px solid #059669; border-radius:10px; padding:12px; display:flex; align-items:center; gap:12px;">
+            <div style="background:#059669; color:#FFF; width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:0.8rem;">CSV</div>
+            <div>
+              <div style="font-size:0.84rem; font-weight:700; color:#FFF;">liquidaciones_caliman_20260814.csv</div>
+              <div style="font-size:0.72rem; color:#94A3B8;">2.1 KB · Hoja para Excel / Sheets</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="study-footer">
+    <p>NC Caliman — Manual de Estudio Técnico & Apuntes de Aprendizaje · Creado únicamente en HTML interactivo</p>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NC Caliman — Manual de Arquitectura & Especificación Técnica v2.5 Enterprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@600;700;800;900&family=Fira+Code:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --bg-base: #0B0F19;
+      --bg-surface: #111827;
+      --bg-elevated: #1F2937;
+      --brand-primary: #8B5CF6;
+      --brand-light: #A78BFA;
+      --accent-green: #14B8A6;
+      --accent-amber: #F59E0B;
+      --text-primary: #F9FAFB;
+      --text-secondary: #CBD5E1;
+      --text-muted: #94A3B8;
+      --border-subtle: rgba(139, 92, 246, 0.15);
+      --border-default: rgba(139, 92, 246, 0.35);
+      --font-main: 'Inter', sans-serif;
+      --font-heading: 'Outfit', 'Inter', sans-serif;
+      --font-code: 'Fira Code', monospace;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.75;
+      padding: 40px 24px;
+      max-width: 1150px;
+      margin: 0 auto;
+    }
+
+    header {
+      border-bottom: 2px solid var(--border-default);
+      padding-bottom: 30px;
+      margin-bottom: 44px;
+    }
+
+    .badge-tag {
+      background: rgba(139, 92, 246, 0.18);
+      color: var(--brand-light);
+      border: 1.5px solid var(--border-default);
+      padding: 4px 14px;
+      border-radius: 999px;
+      font-size: 0.825rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-family: var(--font-heading);
+      font-size: 2.6rem;
+      font-weight: 900;
+      margin-top: 14px;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #FFF, var(--brand-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+
+    h2 {
+      font-family: var(--font-heading);
+      font-size: 1.7rem;
+      color: var(--brand-light);
+      border-left: 4px solid var(--brand-primary);
+      padding-left: 16px;
+      margin-top: 52px;
+      margin-bottom: 22px;
+    }
+
+    h3 {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      color: #FFF;
+      margin-top: 30px;
+      margin-bottom: 14px;
+    }
+
+    p, li {
+      color: var(--text-secondary);
+      font-size: 0.98rem;
+    }
+
+    pre {
+      background: #090D16;
+      border: 1.5px solid var(--border-default);
+      border-radius: 12px;
+      padding: 20px;
+      overflow-x: auto;
+      font-family: var(--font-code);
+      font-size: 0.88rem;
+      color: #E2E8F0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      margin: 16px 0;
+    }
+
+    code {
+      font-family: var(--font-code);
+      background: rgba(139, 92, 246, 0.15);
+      color: var(--brand-light);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.88rem;
+    }
+
+    .card-block {
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-default);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+    }
+
+    .mockup-img {
+      width: 100%;
+      border-radius: 12px;
+      border: 2px solid var(--border-default);
+      margin: 20px 0;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+
+    .data-table th {
+      background: var(--bg-elevated);
+      color: var(--brand-light);
+      text-align: left;
+      padding: 14px 18px;
+      font-size: 0.9rem;
+      border-bottom: 2px solid var(--border-default);
+    }
+
+    .data-table td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 0.9rem;
+    }
+
+    .mermaid {
+      background: var(--bg-surface);
+      padding: 24px;
+      border-radius: 16px;
+      border: 1.5px solid var(--border-default);
+      margin: 24px 0;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <span class="badge-tag">Especificación de Ingeniería (Diátaxis Framework v2.5)</span>
+    <h1>NC Caliman — Manual Técnico & Arquitectura del Sistema</h1>
+    <p class="subtitle">Documento maestro de especificación de software: arquitectura de datos, sincronización Supabase Realtime, módulos OCR, Google Maps en vivo y despliegue Vercel Edge.</p>
+  </header>
+
+  <!-- PILAR I: EXPLICACIÓN Y ARQUITECTURA -->
+  <section>
+    <h2>1. Arquitectura del Sistema & Diagramas (Explicación)</h2>
+    <div class="card-block">
+      <p>El sistema <strong>NC Caliman</strong> es una <em>Single Page Application (SPA)</em> offline-first construida bajo el patrón MVC Frontend sin necesidad de compilación (*Zero-Build Runtime*). Toda la lógica reside de forma nativa en JavaScript ES Modules en <code>src/app.js</code>.</p>
+
+      <h3>1.1. Diagrama de Componentes de Arquitectura</h3>
+      <div class="mermaid">
+        graph TD
+          User[Navegador Móvil / Desktop] -->|HTTPS| Edge[Vercel Edge Network CDN]
+          User -->|Service Worker Cache| SW[sw.js / Offline PWA Cache]
+          User -->|DOM Eventos| MVC[src/app.js - Controller]
+          MVC -->|State Sync| Storage[LocalStorage Cache]
+          MVC -->|Realtime Websocket| Supa[Supabase PostgreSQL Cloud]
+          MVC -->|Google Maps API| GMap[Google Maps JavaScript API]
+          MVC -->|OCR Worker| Tesseract[Tesseract.js Engine]
+      </div>
+
+      <h3>1.2. Diagrama de Secuencia: Registro y Sincronización Realtime</h3>
+      <div class="mermaid">
+        sequenceDiagram
+          autonumber
+          actor Usuario
+          participant Form as Formulario / OCR
+          participant App as src/app.js
+          participant Local as StorageService
+          participant Cloud as Supabase Realtime
+          participant Event as EventBus
+
+          Usuario->>Form: Ingresa peso, bultos y cliente (o escanea OCR)
+          Form->>App: Evento submit / capture
+          App->>App: CalculatorService.calculatePrice()
+          App->>Local: savePackages(pkgs)
+          App->>Cloud: savePackage(targetPkg)
+          Cloud-->>Event: Broadcast postgres_changes (WebSockets)
+          Event-->>Usuario: Muestra Toast "Registro guardado"
+      </div>
+
+      <h3>1.3. Diagrama de Secuencia: Generación y Envío Transaccional de Albarán por Correo</h3>
+      <div class="mermaid">
+        sequenceDiagram
+          autonumber
+          actor Usuario
+          participant UI as Dashboard Header
+          participant Modal as Modal Email Input
+          participant PDF as jsPDF Engine
+          participant Canvas as Canvas API (forceBlack)
+          participant Service as EmailService.js
+          participant Proxy as Vercel Proxy (/api/send-email)
+          participant Resend as Resend API Cloud
+
+          Usuario->>UI: Clic en "Enviar Email"
+          UI->>Modal: Abre formulario de email destino
+          Usuario->>Modal: Ingresa email y pulsa "Enviar Informe"
+          Modal->>PDF: Exec generateAlbaranPDFBase64()
+          PDF->>Canvas: imageToDataURL(logoUrl, true)
+          Canvas-->>PDF: Retorna DataURL en Negro Puro + Ratio Aspecto
+          PDF->>PDF: Construye Vector A4 (doc.rect, doc.text, QR 1:1, 2.5mm margin)
+          PDF-->>Service: Retorna { pdfBase64, filename }
+          Service->>Service: Construye CSV Base64 + HTML Body Transaccional
+          Service->>Proxy: POST /api/send-email (payload JSON + Attachments)
+          Proxy->>Resend: Forward request a https://api.resend.com/emails
+          Resend-->>Usuario: Remite Email con PDF Vectorial A4 + CSV adjuntos
+      </div>
+    </div>
+  </section>
+
+  <!-- CAPTURAS DE PANTALLA Y MOCKUPS -->
+  <section>
+    <h2>2. Visualización de Módulos & Mockups del Sistema</h2>
+    <div class="card-block">
+      <h3>2.1. Panel Principal de Liquidación (Dashboard)</h3>
+      <img src="./images/dashboard_kpi_mockup.png" alt="Dashboard KPI Mockup" class="mockup-img" />
+
+      <h3>2.2. Módulo de Escáner OCR Inteligente</h3>
+      <img src="./images/ocr_scanner_mockup.png" alt="OCR Scanner Mockup" class="mockup-img" />
+
+      <h3>2.3. Monitoreo de Rutas GPS con Google Maps</h3>
+      <img src="./images/google_maps_animation_mockup.png" alt="Google Maps Tracking Mockup" class="mockup-img" />
+
+      <h3>2.4. Módulo de Generación y Envío Transaccional de Albaranes PDF</h3>
+      <p>El sistema incluye una tubería de generación y envío de albaranes oficiales en formato vectorial PDF A4 (210x297mm) sin dependencias de captura DOM:</p>
+
+      <h4 style="color:var(--brand-light); margin-top:14px; margin-bottom:8px;">Especificación Técnica Paso a Paso:</h4>
+      <ol style="margin-left:20px; margin-bottom:16px;">
+        <li><strong>Fase 1 (Umbralizado de Píxeles & Aspect Ratio):</strong> <code>imageToDataURL(url, forceBlack=true)</code> procesa la imagen <code>./assets/logo_van_badge_trimmed.png</code> mediante <code>ctx.getImageData</code>, forzando cada píxel no transparente a negro sólido (RGB 0,0,0) y calculando dinámicamente el ratio de aspecto (<code>w / h</code>) para eliminar el achatamiento vertical.</li>
+        <li><strong>Fase 2 (Generación Vectorial A4 & Geometría):</strong> <code>generateAlbaranPDFBase64()</code> inicializa <code>jsPDF</code> en formato A4 (210x297mm). Aplica separaciones métricas de <code>2.5mm</code> entre las barras de título grises y las cabeceras de tabla negras, y dibuja el código QR a escala 1:1 (14.5x14.5mm) centrado en una caja blanca pura (255,255,255) con 3.4mm de margen de seguridad antes del texto legal.</li>
+        <li><strong>Fase 3 (Tubería de Envío HTTP Transaccional):</strong> <code>EmailService.js</code> adjunta el PDF generado en Base64 junto con la hoja de cálculo CSV y realiza una petición <code>POST</code> a <code>/api/send-email</code> (Serverless Proxy en Vercel) que redirige la carga a <code>https://api.resend.com/emails</code>.</li>
+      </ol>
+
+      <h4 style="color:var(--brand-light); margin-top:16px; margin-bottom:8px;">Mockup Explicativo: Previsualización del Albarán Adjunto en Email</h4>
+      <div style="background:#0F172A; border:2px solid var(--border-default); border-radius:14px; padding:20px; color:#F8FAFC;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px; margin-bottom:16px;">
+          <div>
+            <div style="font-weight:800; font-size:1rem; color:#A78BFA;">📦 NC Caliman Logistics &lt;onboarding@resend.dev&gt;</div>
+            <div style="font-size:0.85rem; color:#94A3B8; margin-top:2px;">Transmisión Transaccional Resend Serverless API</div>
+          </div>
+          <span style="background:rgba(79,70,229,0.3); color:#818CF8; font-size:0.75rem; font-weight:800; padding:4px 10px; border-radius:6px; border:1px solid #4F46E5;">RESEND VERCEL PROXY</span>
+        </div>
+
+        <div style="font-size:0.92rem; font-weight:700; color:#FFF; margin-bottom:12px;">
+          Resumen de la Carga Útil Transmitida (Payload JSON):
+        </div>
+
+        <pre style="background:#090D16; border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:8px; font-size:0.78rem; color:#34D399; margin-bottom:16px;"><code>{
+  "from": "Caliman Gestor Paquetes <onboarding@resend.dev>",
+  "to": ["destinatario@empresa.com"],
+  "subject": "📦 Albarán de Liquidación Caliman — 7 envíos (640.00 €)",
+  "attachments": [
+    { "filename": "Albaran_LIQ-2026-0814.pdf", "content": "<pdfBase64_vector_string>" },
+    { "filename": "liquidaciones_caliman_20260814.csv", "content": "<csvBase64_string>" }
+  ]
+}</code></pre>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:10px;">
+          <div style="background:#1F2937; border:1px solid #4F46E5; border-radius:10px; padding:12px; display:flex; align-items:center; gap:12px;">
+            <div style="background:#4F46E5; color:#FFF; width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:0.8rem;">PDF</div>
+            <div>
+              <div style="font-size:0.84rem; font-weight:700; color:#FFF;">Albaran_LIQ-2026-0814.pdf</div>
+              <div style="font-size:0.72rem; color:#94A3B8;">15.4 KB · Documento Vectorial A4</div>
+            </div>
+          </div>
+
+          <div style="background:#1F2937; border:1px solid #059669; border-radius:10px; padding:12px; display:flex; align-items:center; gap:12px;">
+            <div style="background:#059669; color:#FFF; width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:0.8rem;">CSV</div>
+            <div>
+              <div style="font-size:0.84rem; font-weight:700; color:#FFF;">liquidaciones_caliman_20260814.csv</div>
+              <div style="font-size:0.72rem; color:#94A3B8;">2.1 KB · Hoja para Excel / Sheets</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PILAR II: REFERENCIA DE DATOS -->
+  <section>
+    <h2>3. Referencia de Datos (TypeScript Models & SQL Schemas)</h2>
+    <div class="card-block">
+      <h3>3.1. Modelos de Datos (Interfaces TypeScript)</h3>
+      <pre><code>interface PackageObject {
+  id: string;                      // Formato: "CAL-YYYYMMDD-XXXX"
+  destinatario: string;            // Nombre completo del receptor
+  localidadDestinatario: string;   // Ciudad de entrega en Rumanía
+  bultos: string;                  // Cantidad de bultos (ej: "4")
+  weight: string;                  // Peso acumulado en kg (ej: "114.5")
+  expedidor: string;               // Nombre del remitente
+  localidadExpedidor: string;      // Ciudad de origen
+  price: number;                   // Tarifa calculada en Euros (€)
+  createdAt: string;               // Timestamp ISO-8601
+}</code></pre>
+
+      <h3>3.2. Esquema de Base de Datos PostgreSQL (Supabase DDL)</h3>
+      <pre><code>CREATE TABLE IF NOT EXISTS public.packages (
+  id TEXT PRIMARY KEY,
+  destinatario TEXT NOT NULL,
+  localidadDestinatario TEXT NOT NULL,
+  bultos TEXT DEFAULT '1',
+  weight TEXT DEFAULT '0',
+  expedidor TEXT NOT NULL,
+  localidadExpedidor TEXT NOT NULL,
+  price NUMERIC(10,2) DEFAULT 0,
+  createdAt TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER PUBLICATION supabase_realtime ADD TABLE public.packages;
+ALTER TABLE public.packages ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Permitir lectura y escritura publica" ON public.packages FOR ALL USING (true) WITH CHECK (true);</code></pre>
+    </div>
+  </section>
+
+  <!-- PILAR IV: GUÍA DE OPERACIONES -->
+  <section>
+    <h2>4. Guía de Operaciones & Solución de Incidencias (How-To)</h2>
+    <div class="card-block">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Método</th>
+            <th>Procedimiento</th>
+            <th>Resultado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>GUI (Vercel Drop)</strong></td>
+            <td>Arrastrar la carpeta <code>gestor paquetes</code> al panel de Vercel.</td>
+            <td>Nueva versión publicada en &lt;10s sin cambiar la URL.</td>
+          </tr>
+          <tr>
+            <td><strong>CLI (Terminal)</strong></td>
+            <td>Ejecutar <code>npx vercel --prod</code> en la raíz.</td>
+            <td>Despliegue automático a producción.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer style="margin-top:60px;padding-top:20px;border-top:1px solid var(--border-subtle);text-align:center;">
+    <p style="font-size:0.85rem;color:var(--text-muted);">NC Caliman — Especificación de Ingeniería v2.5 Enterprise · Documento HTML Exclusivo</p>
+  </footer>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    lucide.createIcons();
+  </script>
+</body>
+</html>

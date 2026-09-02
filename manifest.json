@@ -1,0 +1,17 @@
+{
+  "name": "NC Caliman — Gestor de Paquetes",
+  "short_name": "NC Caliman",
+  "description": "Gestor de caja y paquetería de fin de semana.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0B0F19",
+  "theme_color": "#0B0F19",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

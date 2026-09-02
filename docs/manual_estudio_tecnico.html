@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NC Caliman — Manual de Estudio Técnico & Guía de Aprendizaje</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --bg-base: #0B0F19;
+      --bg-surface: #111827;
+      --bg-elevated: #1F2937;
+      --brand-primary: #8B5CF6;
+      --brand-light: #A78BFA;
+      --accent-green: #14B8A6;
+      --accent-green-light: #2DD4BF;
+      --accent-amber: #F59E0B;
+      --text-primary: #F9FAFB;
+      --text-secondary: #9CA3AF;
+      --text-muted: #6B7280;
+      --border-subtle: rgba(139, 92, 246, 0.15);
+      --border-default: rgba(139, 92, 246, 0.28);
+      --border-strong: rgba(139, 92, 246, 0.45);
+      --font-main: 'Inter', sans-serif;
+      --font-heading: 'Outfit', 'Inter', sans-serif;
+      --font-code: 'Fira Code', monospace;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.7;
+      padding: 40px 20px;
+      max-width: 1050px;
+      margin: 0 auto;
+    }
+
+    header {
+      border-bottom: 2px solid var(--border-default);
+      padding-bottom: 24px;
+      margin-bottom: 40px;
+    }
+
+    .badge-tag {
+      background: rgba(139, 92, 246, 0.15);
+      color: var(--brand-light);
+      border: 1px solid var(--border-default);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-family: var(--font-heading);
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-top: 12px;
+      margin-bottom: 6px;
+      background: linear-gradient(135deg, #fff, var(--brand-light), var(--accent-green-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+    }
+
+    h2 {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      color: var(--brand-light);
+      border-left: 4px solid var(--brand-primary);
+      padding-left: 14px;
+      margin-top: 44px;
+      margin-bottom: 20px;
+    }
+
+    h3 {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      color: #fff;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+
+    p, li {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    strong {
+      color: var(--text-primary);
+    }
+
+    pre {
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-default);
+      border-radius: 12px;
+      padding: 20px;
+      overflow-x: auto;
+      font-family: var(--font-code);
+      font-size: 0.88rem;
+      color: #E2E8F0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      margin: 16px 0;
+    }
+
+    code {
+      font-family: var(--font-code);
+      background: rgba(139, 92, 246, 0.15);
+      color: var(--brand-light);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.88rem;
+    }
+
+    .card-block {
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-default);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: var(--brand-primary);
+      color: #fff;
+      border-radius: 50%;
+      font-weight: 800;
+      font-size: 0.85rem;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <span class="badge-tag">Guía de Aprendizaje & Patrones Reutilizables</span>
+    <h1>🎓 Manual de Estudio Técnico</h1>
+    <p class="subtitle">Desglose paso a paso de las funcionalidades avanzadas desarrolladas en NC Caliman para futuras consultas y proyectos.</p>
+  </header>
+
+  <!-- 1. GOOGLE MAPS & ANIMACIÓN -->
+  <section>
+    <h2><i data-lucide="map" style="vertical-align:-2px"></i> 1. Módulo I: Google Maps Animado y Trayecto del Vehículo</h2>
+    <div class="card-block">
+      <p>Este módulo carga la API de Google Maps de forma asíncrona, traza una polilínea de ruta y desplaza un marcador de vehículo calculando el rumbo (*heading*) dinámicamente mediante interpolación matemática.</p>
+
+      <h3>Paso 1: Cálculo del Rumbo (*Heading*) en Grados</h3>
+      <pre><code>function calculateHeading(lat1, lng1, lat2, lng2) {
+  const dLng = (lng2 - lng1) * (Math.PI / 180);
+  const lat1Rad = lat1 * (Math.PI / 180);
+  const lat2Rad = lat2 * (Math.PI / 180);
+
+  const y = Math.sin(dLng) * Math.cos(lat2Rad);
+  const x = Math.cos(lat1Rad) * Math.sin(lat2Rad) -
+            Math.sin(lat1Rad) * Math.cos(lat2Rad) * Math.cos(dLng);
+
+  const heading = Math.atan2(y, x) * (180 / Math.PI);
+  return (heading + 360) % 360;
+}</code></pre>
+
+      <h3>Paso 2: Animación Fluida con `requestAnimationFrame`</h3>
+      <pre><code>function animateVehicle(marker, routePoints, speed = 0.02) {
+  let index = 0, progress = 0;
+
+  function step() {
+    if (index >= routePoints.length - 1) index = 0;
+    const p1 = routePoints[index], p2 = routePoints[index + 1];
+    progress += speed;
+
+    if (progress >= 1.0) { progress = 0; index++; }
+
+    const lat = p1.lat + (p2.lat - p1.lat) * progress;
+    const lng = p1.lng + (p2.lng - p1.lng) * progress;
+    marker.setPosition(new google.maps.LatLng(lat, lng));
+
+    const heading = calculateHeading(p1.lat, p1.lng, p2.lat, p2.lng);
+    marker.setIcon({ path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW, scale: 5, rotation: heading });
+
+    requestAnimationFrame(step);
+  }
+  step();
+}</code></pre>
+    </div>
+  </section>
+
+  <!-- 2. OCR SCANNER -->
+  <section>
+    <h2><i data-lucide="camera" style="vertical-align:-2px"></i> 2. Módulo II: Escáner OCR de Formulario (Tesseract.js + Canvas API)</h2>
+    <div class="card-block">
+      <p>Accede a la cámara trasera del dispositivo, captura un fotograma en un `HTMLCanvasElement`, binariza los píxeles para aumentar el contraste y reconoce el texto mediante Tesseract.js.</p>
+
+      <h3>Captura y Preprocesamiento de Imagen</h3>
+      <pre><code>function captureAndEnhance(videoEl, canvasEl) {
+  const ctx = canvasEl.getContext('2d');
+  canvasEl.width = videoEl.videoWidth;
+  canvasEl.height = videoEl.videoHeight;
+  ctx.drawImage(videoEl, 0, 0);
+
+  const imgData = ctx.getImageData(0, 0, canvasEl.width, canvasEl.height);
+  const data = imgData.data;
+
+  // Filtro de escala de grises y binarización
+  for (let i = 0; i < data.length; i += 4) {
+    const avg = data[i] * 0.299 + data[i+1] * 0.587 + data[i+2] * 0.114;
+    const val = avg > 128 ? 255 : 0;
+    data[i] = data[i+1] = data[i+2] = val;
+  }
+  ctx.putImageData(imgData, 0, 0);
+  return canvasEl.toDataURL('image/png');
+}</code></pre>
+    </div>
+  </section>
+
+  <!-- 3. OFFLINE FIRST SUPABASE -->
+  <section>
+    <h2><i data-lucide="database" style="vertical-align:-2px"></i> 3. Módulo III: Persistencia Híbrida Offline-First + Supabase Realtime</h2>
+    <div class="card-block">
+      <p>Escribe inmediatamente en `LocalStorage` para garantizar respuesta instantánea de UI (0ms) y sincroniza los cambios en segundo plano con PostgreSQL en Supabase via WebSockets.</p>
+
+      <pre><code>// Suscripción Realtime a Cambios en PostgreSQL
+supabase.channel('public:packages')
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'packages' }, (payload) => {
+    if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+      saveLocalPackage(payload.new);
+    }
+    renderUI();
+  })
+  .subscribe();</code></pre>
+    </div>
+  </section>
+
+  <!-- 4. SISTEMA CSS -->
+  <section>
+    <h2><i data-lucide="palette" style="vertical-align:-2px"></i> 4. Módulo IV: Sistema de Diseño CSS & Tipografía Fluida</h2>
+    <div class="card-block">
+      <pre><code>:root {
+  --font-heading: 'Outfit', 'Inter', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+  --text-2xl: clamp(1.4rem, 1.25rem + 0.75vw, 1.65rem);
+}
+
+.price-tag, .cell-weight, .cell-bultos {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums lining-nums;
+}</code></pre>
+    </div>
+  </section>
+
+  <footer style="margin-top:60px;padding-top:20px;border-top:1px solid var(--border-subtle);text-align:center;">
+    <p style="font-size:0.85rem;color:var(--text-muted);">NC Caliman — Manual de Estudio Técnico v2.5 · Guía de Referencia y Reutilización</p>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

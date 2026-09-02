@@ -1,0 +1,10 @@
+{
+  "name": "gestor-paquetes",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "marked": "^18.0.7",
+    "md-to-pdf": "^5.2.5",
+    "puppeteer": "^25.4.0"
+  }
+}

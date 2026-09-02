@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 160" width="420" height="160">
+  <defs>
+    <!-- Cyan to Purple Speed Gradient -->
+    <linearGradient id="speedGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2DD4BF" stop-opacity="0.1"/>
+      <stop offset="50%" stop-color="#2DD4BF" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#A78BFA" stop-opacity="1"/>
+    </linearGradient>
+
+    <!-- Neon Glow Filter -->
+    <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Speed Lines Trailing Left -->
+  <g fill="url(#speedGrad)" filter="url(#neonGlow)">
+    <polygon points="15,35 190,44 190,48 15,39"/>
+    <polygon points="35,55 205,63 205,67 35,59"/>
+    <polygon points="5,75 220,83 220,87 5,79"/>
+    <polygon points="25,95 210,103 210,107 25,99"/>
+    <polygon points="45,115 195,123 195,127 45,119"/>
+  </g>
+
+  <!-- 2D Express Van Body Outline (Pure Vector, No Noise) -->
+  <path d="M 195 130 
+           L 220 42 
+           C 225 34, 238 32, 255 32 
+           L 300 32 
+           C 330 32, 355 44, 375 68 
+           L 395 95 
+           C 405 108, 405 122, 395 130 
+           L 385 132 
+           C 375 132, 365 112, 345 112 
+           C 325 112, 315 132, 300 132 
+           L 255 132 
+           C 245 132, 235 112, 215 112 
+           C 195 112, 190 132, 195 130 Z" 
+        fill="#FFFFFF" 
+        filter="url(#neonGlow)"/>
+
+  <!-- Windshield Glass Cutout -->
+  <path d="M 272 44 L 302 44 L 334 78 L 272 78 Z" fill="#0B0F19"/>
+
+  <!-- Rear Wheel & Rim -->
+  <circle cx="225" cy="125" r="17" fill="#0B0F19"/>
+  <circle cx="225" cy="125" r="15" stroke="#2DD4BF" stroke-width="4" fill="#0B0F19"/>
+  <circle cx="225" cy="125" r="6" fill="#A78BFA" filter="url(#neonGlow)"/>
+
+  <!-- Front Wheel & Rim -->
+  <circle cx="355" cy="125" r="17" fill="#0B0F19"/>
+  <circle cx="355" cy="125" r="15" stroke="#2DD4BF" stroke-width="4" fill="#0B0F19"/>
+  <circle cx="355" cy="125" r="6" fill="#A78BFA" filter="url(#neonGlow)"/>
+
+  <!-- Headlight Accent -->
+  <path d="M 390 98 L 404 104 L 392 110 Z" fill="#FBBF24" filter="url(#neonGlow)"/>
+</svg>

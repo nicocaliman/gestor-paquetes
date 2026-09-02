@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 512" width="1024" height="512">
+  <defs>
+    <filter id="vanGlow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <g fill="#FFFFFF" filter="url(#vanGlow)">
+    <!-- Speed Lines Trailing Left (Matching user image exact geometry) -->
+    <polygon points="160,160 580,195 580,205 160,170"/>
+    <polygon points="110,215 570,242 570,252 110,225"/>
+    <polygon points="35,270 540,292 540,302 35,280"/>
+    <polygon points="105,325 500,340 500,348 105,333"/>
+    <polygon points="180,380 480,388 480,394 180,386"/>
+    <polygon points="290,430 460,432 460,436 290,434"/>
+
+    <!-- Fast 2D Van Profile Silhouette -->
+    <!-- Van Roof & Windshield Line -->
+    <path d="M 580 195 
+             C 610 115, 650 95, 710 95 
+             L 790 95 
+             C 850 95, 900 135, 940 210 
+             L 965 260 
+             C 980 290, 980 340, 955 355 
+             L 935 358 
+             C 920 358, 905 320, 865 320 
+             C 825 320, 810 358, 790 358 
+             L 700 358 
+             C 680 358, 665 320, 625 320 
+             C 585 320, 570 358, 550 358 
+             L 480 358 
+             L 580 195 Z" />
+
+    <!-- Front Bumper Line -->
+    <path d="M 955 330 C 970 330, 975 350, 955 358 L 730 358 L 730 342 Z"/>
+  </g>
+
+  <!-- Wheels Cutouts -->
+  <g fill="#0B0F19">
+    <circle cx="645" cy="345" r="42"/>
+    <circle cx="645" cy="345" r="24" fill="#FFFFFF"/>
+    
+    <circle cx="885" cy="345" r="42"/>
+    <circle cx="885" cy="345" r="24" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Windshield Window Cutout -->
+  <path d="M 720 120 L 780 120 L 920 240 L 720 240 Z" fill="#0B0F19"/>
+
+  <!-- Headlight Cutout -->
+  <ellipse cx="945" cy="290" rx="20" ry="12" fill="#FFFFFF"/>
+</svg>

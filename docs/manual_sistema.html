@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NC Caliman — Guía de Uso del Sistema (Manual Familiar)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --bg-base: #0B0F19;
+      --bg-surface: #111827;
+      --bg-elevated: #1F2937;
+      --brand-primary: #8B5CF6;
+      --brand-light: #A78BFA;
+      --accent-green: #14B8A6;
+      --accent-green-light: #2DD4BF;
+      --accent-amber: #F59E0B;
+      --text-primary: #F9FAFB;
+      --text-secondary: #CBD5E1;
+      --text-muted: #94A3B8;
+      --border-default: rgba(139, 92, 246, 0.35);
+      --font-main: 'Inter', sans-serif;
+      --font-heading: 'Outfit', 'Inter', sans-serif;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.75;
+      padding: 30px 20px;
+      max-width: 1050px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      padding-bottom: 32px;
+      border-bottom: 2px solid var(--border-default);
+      margin-bottom: 44px;
+    }
+
+    .brand-logo-hero {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #8B5CF6, #14B8A6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 2rem;
+      font-weight: 900;
+      color: #fff;
+      font-family: var(--font-heading);
+      box-shadow: 0 0 30px rgba(139, 92, 246, 0.4);
+    }
+
+    .brand-title {
+      font-family: var(--font-heading);
+      font-size: 2.6rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #fff, var(--brand-light), var(--accent-green-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1.15rem;
+    }
+
+    h2 {
+      font-family: var(--font-heading);
+      font-size: 1.7rem;
+      color: var(--brand-light);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 48px;
+      margin-bottom: 22px;
+    }
+
+    .step-card {
+      background: var(--bg-surface);
+      border: 2px solid var(--border-default);
+      border-radius: 18px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      background: var(--brand-primary);
+      color: #fff;
+      font-weight: 800;
+      border-radius: 50%;
+      margin-right: 12px;
+      font-family: var(--font-heading);
+    }
+
+    .scenario-box {
+      border-left: 4px solid var(--accent-green);
+      background: rgba(20, 184, 166, 0.08);
+      padding: 24px;
+      border-radius: 0 16px 16px 0;
+      margin-bottom: 24px;
+    }
+
+    .scenario-title {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--accent-green-light);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mockup-img {
+      width: 100%;
+      border-radius: 14px;
+      border: 2px solid var(--border-default);
+      margin: 18px 0;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .faq-q {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      margin-top: 22px;
+      margin-bottom: 8px;
+    }
+
+    .faq-a {
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+
+    .pill {
+      background: rgba(139, 92, 246, 0.18);
+      color: var(--brand-light);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border: 1px solid var(--border-default);
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="brand-logo-hero">NC</div>
+    <h1 class="brand-title">NC Caliman — Guía de Uso del Sistema</h1>
+    <p class="subtitle">Manual de usuario visual e intuitivo para toda la familia</p>
+  </header>
+
+  <!-- 1. INICIO RÁPIDO EN 3 PASOS -->
+  <section>
+    <h2><i data-lucide="rocket" style="color:var(--brand-light)"></i> 1. Guía de Inicio Rápido en 3 Pasos</h2>
+    
+    <div class="step-card">
+      <h3><span class="step-number">1</span> Abrir la Web en el Teléfono Móvil</h3>
+      <p>Abre el navegador de tu teléfono móvil (Chrome o Safari) e ingresa a la dirección web oficial del sistema:</p>
+      <p style="text-align:center;margin:20px 0;"><span class="pill" style="font-size:1.2rem;padding:10px 24px;">https://ncpack.vercel.app</span></p>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="step-number">2</span> Instalar la App en la Pantalla de Inicio</h3>
+      <p>No necesitas descargar nada desde la tienda de aplicaciones. Al abrir la web:</p>
+      <ul style="margin-left:20px;margin-top:10px;">
+        <li><strong>En Android / Chrome:</strong> Toca el botón morado <span class="pill"><i data-lucide="download" style="width:14px;height:14px;display:inline-block;vertical-align:-2px;"></i> Instalar App</span> en el menú lateral.</li>
+        <li><strong>En iPhone / Safari:</strong> Toca el botón inferior de <em>Compartir</em> (el cuadrado con la flecha hacia arriba) y selecciona <em>"Añadir a la pantalla de inicio"</em>.</li>
+      </ul>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="step-number">3</span> Trabajo en Equipo Sincronizado</h3>
+      <p>¡Listo! Todos los miembros de la familia pueden abrir el icono de <strong>NC Caliman</strong> en su teléfono. Cualquier paquete registrado se actualizará en tiempo real en todos los dispositivos mediante la nube.</p>
+    </div>
+  </section>
+
+  <!-- 2. FLUSO POR ESCENARIOS CON MOCKUPS -->
+  <section>
+    <h2><i data-lucide="calendar" style="color:var(--accent-green-light)"></i> 2. Flujo de Trabajo del Fin de Semana (Escenarios Reales)</h2>
+
+    <div class="scenario-box">
+      <div class="scenario-title"><i data-lucide="sun"></i> Escenario 1: Viernes por la tarde — Preparación</div>
+      <p>Antes de empezar a recoger paquetes:</p>
+      <ul style="margin-left:20px;margin-top:8px;">
+        <li>Abre la sección <strong>Tarifas y Precios</strong> para revisar los precios por kilo.</li>
+        <li>Consulta la sección <strong>Info & Rutas</strong> si un cliente pregunta si entregamos en una localidad específica de Rumanía.</li>
+      </ul>
+    </div>
+
+    <div class="scenario-box">
+      <div class="scenario-title"><i data-lucide="truck"></i> Escenario 2: Sábado — Recogida y Registro de Envíos en Movilidad</div>
+      <p>Cuando un cliente entrega un paquete en la furgoneta o punto de encuentro:</p>
+      <ol style="margin-left:20px;margin-top:8px;">
+        <li>Toca la pestaña <strong>Registrar Paquete</strong>.</li>
+        <li><strong>Escáner Inteligente OCR:</strong> Pulsa <em>"Abrir Escáner"</em> o <em>"Subir Imagen"</em> y enfoca la libreta. El sistema rellenará los datos por ti.</li>
+        <li><strong>Autocompletado:</strong> Al escribir el nombre del destinatario, la app sugerirá nombres guardados y <strong>rellenará la ciudad automáticamente</strong>.</li>
+        <li>Introduce bultos y peso total (kg). El sistema calcula el importe exacto en Euros (€).</li>
+        <li>Pulsa <strong>Guardar Envío en Liquidación</strong>.</li>
+      </ol>
+      <img src="./images/ocr_scanner_mockup.png" alt="Mockup Escáner OCR" class="mockup-img" />
+    </div>
+
+    <div class="scenario-box">
+      <div class="scenario-title"><i data-lucide="check-circle-2"></i> Escenario 3: Domingo por la tarde — Cierre y Cuentas Finales</div>
+      <p>Al terminar la jornada del domingo:</p>
+      <ol style="margin-left:20px;margin-top:8px;">
+        <li>Abre la pestaña <strong>Panel Principal de Liquidación (Dashboard)</strong>.</li>
+        <li>Comprueba la tarjeta verde <strong>"Total Recaudado (€)"</strong> para ver el dinero exacto en efectivo que debe haber en la caja.</li>
+        <li>Pulsa <strong>"Guardar Excel (CSV)"</strong> para enviar el resumen por WhatsApp o <strong>"Imprimir Liquidación"</strong>.</li>
+        <li>Pulsa el botón <strong>"Cerrar y Archivar Finde"</strong> para guardar la liquidación en el Histórico.</li>
+      </ol>
+      <img src="./images/dashboard_kpi_mockup.png" alt="Mockup Dashboard KPI" class="mockup-img" />
+    </div>
+
+    <div class="scenario-box">
+      <div class="scenario-title"><i data-lucide="map-pin"></i> Monitoreo del Vehículo en Ruta</div>
+      <p>En la sección <strong>Info & Rutas</strong>, puedes seguir en tiempo real el desplazamiento del camión en la ruta España ⇄ Rumanía:</p>
+      <img src="./images/google_maps_animation_mockup.png" alt="Mockup Google Maps Tracking" class="mockup-img" />
+    </div>
+  </section>
+
+  <!-- 3. PREGUNTAS FRECUENTES -->
+  <section>
+    <h2><i data-lucide="help-circle" style="color:var(--accent-amber)"></i> 3. Preguntas Frecuentes y Solución de Dudas</h2>
+
+    <div class="faq-q">❓ ¿Podemos registrar paquetes varias personas a la vez?</div>
+    <div class="faq-a">¡Sí! Toda la familia puede estar registrando paquetes al mismo tiempo desde sus respectivos teléfonos. La nube de Supabase sincroniza los datos al instante en todos los dispositivos.</div>
+
+    <div class="faq-q">❓ ¿Qué pasa si me quedo sin cobertura de internet en la furgoneta?</div>
+    <div class="faq-a">No te preocupes. La aplicación guardará todos los paquetes en tu teléfono. En cuanto vuelvas a tener cobertura móvil o conexión Wi-Fi, los envíos se subirán solos a la nube sin perder ningún dato.</div>
+
+    <div class="faq-q">❓ ¿Cómo corrijo un paquete si me equivoqué en el peso o en el nombre?</div>
+    <div class="faq-a">En la tabla del Dashboard, busca el paquete y pulsa el botón del <strong>Lápiz (Editar)</strong> para corregir los datos, o el botón del <strong>Cubo de Basura (Eliminar)</strong> si deseas borrarlo.</div>
+  </section>
+
+  <footer style="margin-top:60px;padding-top:20px;border-top:1px solid var(--border-default);text-align:center;">
+    <p style="font-size:0.85rem;color:var(--text-muted);">NC Caliman — Manual del Usuario v2.5 · Guía de Trabajo Familiar en HTML Exclusivo</p>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

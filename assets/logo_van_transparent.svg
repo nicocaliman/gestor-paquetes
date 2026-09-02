@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 110" width="320" height="110">
+  <defs>
+    <linearGradient id="vanGlowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2DD4BF" stop-opacity="0"/>
+      <stop offset="30%" stop-color="#2DD4BF" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#A78BFA" stop-opacity="1"/>
+    </linearGradient>
+    <filter id="neonGlow">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Speed Streaks Trailing Left (Pure Vector) -->
+  <g stroke="url(#vanGlowGrad)" stroke-width="4.5" stroke-linecap="round" opacity="0.9">
+    <line x1="10" y1="22" x2="155" y2="22"/>
+    <line x1="30" y1="34" x2="162" y2="34"/>
+    <line x1="5"  y1="46" x2="168" y2="46"/>
+    <line x1="25" y1="58" x2="150" y2="58"/>
+    <line x1="12" y1="70" x2="175" y2="70"/>
+    <line x1="45" y1="82" x2="160" y2="82"/>
+    <line x1="20" y1="94" x2="178" y2="94"/>
+  </g>
+
+  <!-- Sleek 2D Van Outline (White & Teal Neon on Dark) -->
+  <g fill="none" stroke="#F8FAFC" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" filter="url(#neonGlow)">
+    <!-- Main Body & Roof Contour -->
+    <path d="M 160 92 L 182 22 C 185 18, 192 16, 200 16 L 245 16 C 255 16, 268 22, 276 34 L 298 62 C 304 70, 312 74, 320 76 C 324 77, 324 82, 320 86 L 305 92 C 298 94, 292 88, 280 88 C 268 88, 262 94, 252 94 L 222 94 C 212 94, 206 88, 194 88 C 182 88, 176 94, 168 94 Z" />
+    
+    <!-- Windshield Outline -->
+    <path d="M 242 24 L 270 60 L 235 60 L 235 24 Z" stroke="#38BDF8" stroke-width="4.5" fill="rgba(56, 189, 248, 0.2)"/>
+    
+    <!-- Cabin Door Partition -->
+    <line x1="230" y1="20" x2="215" y2="90" stroke="#A78BFA" stroke-width="4"/>
+
+    <!-- Headlight -->
+    <ellipse cx="308" cy="74" rx="5" ry="3" fill="#FDE047" stroke="#FDE047"/>
+  </g>
+
+  <!-- Wheels (Clean Vector) -->
+  <g fill="#0B0F19" stroke="#2DD4BF" stroke-width="4.5" filter="url(#neonGlow)">
+    <!-- Rear Wheel -->
+    <circle cx="184" cy="92" r="14"/>
+    <circle cx="184" cy="92" r="5" fill="#A78BFA" stroke="none"/>
+
+    <!-- Front Wheel -->
+    <circle cx="270" cy="92" r="14"/>
+    <circle cx="270" cy="92" r="5" fill="#A78BFA" stroke="none"/>
+  </g>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 512" width="1024" height="512">
+  <defs>
+    <mask id="vanMask">
+      <image href="van_white_transparent.png" width="1024" height="512"/>
+    </mask>
+    <linearGradient id="vanGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#E2E8F0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="512" fill="url(#vanGradient)" mask="url(#vanMask)"/>
+</svg>
