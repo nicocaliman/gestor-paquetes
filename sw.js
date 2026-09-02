@@ -4,7 +4,7 @@
 
 // Note 2: Cache Identifier and Versioning
 // Changing this version string triggers the Service Worker activation phase to purge obsolete cached assets.
-const CACHE_NAME = 'nc-caliman-v106';
+const CACHE_NAME = 'nc-caliman-v107';
 
 // Note 3: Static Asset Manifest for Offline Pre-caching
 // List of critical shell resources required to load the user interface even without an active internet connection.
