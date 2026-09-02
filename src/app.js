@@ -3072,6 +3072,12 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
     document.getElementById('clients-search-input')?.addEventListener('input', () => {
       renderClientsView();
     });
+    document.getElementById('clients-role-filter')?.addEventListener('click', (e) => {
+      const btn = e.target.closest('.client-role-filter__btn');
+      if (!btn) return;
+      document.querySelectorAll('.client-role-filter__btn').forEach(b => b.classList.toggle('active', b === btn));
+      renderClientsView();
+    });
 
     // ── Iconos de búsqueda que hacen morph lupa↔X (morphicons) ─────
     // El propio icono de lupa es el botón de limpiar: al escribir se transforma
@@ -3611,21 +3617,28 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
       if (!container) return;
 
       syncClientsFromPackages(StorageService.getPackages());
+      const hasAnyClients = StorageService.getClients().length > 0;
       let clients = StorageService.getClients();
       const filter = (document.getElementById('clients-search-input')?.value || '').trim().toLowerCase();
+      const roleFilter = document.querySelector('.client-role-filter__btn.active')?.dataset.role || 'all';
 
       if (filter) {
         clients = clients.filter(c => c.name.toLowerCase().includes(filter) || c.city.toLowerCase().includes(filter));
       }
+      if (roleFilter !== 'all') {
+        clients = clients.filter(c => (c.role || 'Destinatario') === roleFilter);
+      }
 
       if (clients.length === 0) {
+        const title = hasAnyClients ? 'Ningún cliente coincide con el filtro' : 'No hay clientes guardados aún';
+        const subtitle = hasAnyClients ? 'Probá con otro nombre, localidad o rol.' : 'Se guardarán automáticamente al crear envíos.';
         container.innerHTML = `
           <div class="empty-state" style="margin-top:0; border:none; background:transparent; box-shadow:none; padding:48px 20px;">
             <div class="empty-state__icon" style="color:var(--text-muted); opacity:0.4; margin-bottom:12px; display:flex; justify-content:center; align-items:center;">
               <i data-lucide="users" style="width:48px;height:48px;"></i>
             </div>
-            <h3 style="font-size:1.1rem;font-weight:700;color:var(--text-primary);margin-bottom:6px;text-align:center;">No hay clientes guardados aún</h3>
-            <p style="font-size:clamp(0.62rem, 2.8vw, 0.85rem);color:var(--text-secondary);white-space:nowrap;margin:0 auto;text-align:center;line-height:1.5;max-width:100%;">Se guardarán automáticamente al crear envíos.</p>
+            <h3 style="font-size:1.1rem;font-weight:700;color:var(--text-primary);margin-bottom:6px;text-align:center;">${title}</h3>
+            <p style="font-size:clamp(0.62rem, 2.8vw, 0.85rem);color:var(--text-secondary);white-space:nowrap;margin:0 auto;text-align:center;line-height:1.5;max-width:100%;">${subtitle}</p>
           </div>
         `;
         lucide.createIcons({ nodes: [container] });
@@ -3633,31 +3646,90 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
       }
 
       let html = `
-        <div style="overflow-x: auto;">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Nombre del Cliente</th>
-                <th>Ciudad / Localidad</th>
-                <th>Tipo</th>
-                <th style="text-align:right;">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${clients.map(c => `
-                <tr>
-                  <td style="font-weight:700; font-size:0.92rem;">${_esc(c.name)}</td>
-                  <td><span class="badge--city"><i data-lucide="map-pin" style="width:13px;height:13px;"></i> ${_esc(c.city)}</span></td>
-                  <td><span class="${c.role === 'Expedidor' ? 'badge--warning' : 'badge--info'}">${_esc(c.role || 'Cliente')}</span></td>
-                  <td>
-                    <button class="action-btn-danger delete-client-btn" data-id="${c.id}" title="Eliminar de la agenda">
-                      <i data-lucide="trash-2" style="width:16px;height:16px"></i>
-                    </button>
-                  </td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
+        <style>
+          .client-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 10px;
+          }
+          .client-card {
+            position: relative;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-default);
+            border-top: 3px solid var(--client-accent, var(--brand-primary));
+            border-radius: var(--radius-md);
+            padding: 12px 30px 12px 14px;
+            box-shadow: var(--shadow-sm);
+            opacity: 0;
+            transform: scale(0.95);
+            animation: clientCardIn 200ms ease-out forwards;
+            transition: transform 150ms ease-out, border-color 150ms ease, box-shadow 150ms ease-out;
+          }
+          @keyframes clientCardIn { to { opacity: 1; transform: scale(1); } }
+          @media (hover: hover) and (pointer: fine) {
+            .client-card:hover {
+              transform: translateY(-2px);
+              box-shadow: var(--shadow-md);
+              border-color: color-mix(in srgb, var(--brand-primary) 50%, var(--border-default));
+            }
+          }
+          .client-card__name {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 0.88rem;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .client-card__city {
+            margin-top: 3px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .client-card__delete {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: background 150ms ease, color 150ms ease, transform 150ms ease-out;
+          }
+          .client-card__delete:hover { background: rgba(192, 57, 43, 0.14); color: #D9695C; }
+          .client-card__delete:active { transform: scale(0.9); }
+          @media (prefers-reduced-motion: reduce) {
+            .client-card { animation: none; opacity: 1; transform: none; }
+          }
+        </style>
+        <div class="client-grid">
+          ${clients.map((c, i) => {
+            const isExp = c.role === 'Expedidor';
+            const accentVar = isExp ? 'var(--status-pending-text)' : 'var(--status-transit-text)';
+            const delay = Math.min(i, 15) * 30;
+            return `
+              <div class="client-card" style="--client-accent:${accentVar}; animation-delay:${delay}ms;">
+                <button class="client-card__delete delete-client-btn" data-id="${c.id}" title="Eliminar de la agenda">
+                  <i data-lucide="trash-2" style="width:13px;height:13px"></i>
+                </button>
+                <div class="client-card__name" title="${_esc(c.name)}">${_esc(c.name)}</div>
+                <div class="client-card__city" title="${_esc(c.city)}"><i data-lucide="map-pin" style="width:11px;height:11px;flex-shrink:0;"></i>${_esc(c.city)}</div>
+              </div>
+            `;
+          }).join('')}
         </div>
       `;
 

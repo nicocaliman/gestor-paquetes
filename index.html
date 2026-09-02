@@ -2876,6 +2876,40 @@
       border-radius: 8px !important;
     }
 
+    /* ── Directorio de Clientes: filtro por rol ─────────────────── */
+    .client-role-filter {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-xl);
+      padding: 3px;
+    }
+
+    .client-role-filter__btn {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-family);
+      font-size: 0.78rem;
+      font-weight: 700;
+      white-space: nowrap;
+      padding: 6px 14px;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: background 150ms ease, color 150ms ease;
+    }
+
+    .client-role-filter__btn:hover {
+      color: var(--text-primary);
+    }
+
+    .client-role-filter__btn.active {
+      background: var(--brand-primary);
+      color: #FFFFFF;
+    }
+
     .btn-icon--danger {
       background: rgba(192, 57, 43, 0.14) !important;
       color: #D9695C !important;
@@ -5770,7 +5804,12 @@
           <div class="input-with-badge" style="flex:1;min-width:240px;position:relative;">
             <svg id="clients-search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
               style="color:#C3BCCF;position:absolute;left:14px;top:50%;transform:translateY(-50%);cursor:pointer;" role="button" tabindex="0" aria-label="Buscar"><path></path></svg>
-            <input type="text" id="clients-search-input" class="form-input" style="padding-left:42px !important;" placeholder="Buscar por nombre de cliente, teléfono o localidad...">
+            <input type="text" id="clients-search-input" class="form-input" style="padding-left:42px !important;" placeholder="Buscar por nombre o localidad...">
+          </div>
+          <div class="client-role-filter" id="clients-role-filter" role="group" aria-label="Filtrar por rol">
+            <button type="button" class="client-role-filter__btn active" data-role="all">Todos</button>
+            <button type="button" class="client-role-filter__btn" data-role="Destinatario">Destinatarios</button>
+            <button type="button" class="client-role-filter__btn" data-role="Expedidor">Expedidores</button>
           </div>
         </div>
         <div id="clients-table-container"></div>
