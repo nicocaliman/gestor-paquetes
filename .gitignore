@@ -9,3 +9,6 @@ node_modules/
 # Documentos de rutas con posibles datos reales de clientes (no requeridos por la app)
 RUTA DUMINICA.xlsx
 ruta sambata.pdf
+
+.vercel
+.env*
