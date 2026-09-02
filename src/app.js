@@ -3254,6 +3254,28 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
         `;
       }).join('');
 
+      // Acordeón por ciudad: fila plegable con nombre + % en el resumen,
+      // bultos y peso en el detalle expandido (reusa el patrón visual de
+      // .route-day-accordion — punto de color vía --banner-color).
+      const cityAccordionHTML = segments.map(s => `
+        <details class="city-accordion">
+          <summary class="city-accordion-summary" style="--banner-color: ${s.color};">
+            <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+              <span class="city-accordion-dot"></span>
+              <span class="city-accordion-name">${s.city}</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span class="city-accordion-pct">${(s.pct * 100).toFixed(1)}%</span>
+              <i data-lucide="chevron-down" class="accordion-chevron"></i>
+            </div>
+          </summary>
+          <div class="city-accordion-detail">
+            <span><strong>${s.count}</strong> bulto${s.count === 1 ? '' : 's'}</span>
+            <span>${s.weight.toFixed(1)} kg</span>
+          </div>
+        </details>
+      `).join('');
+
       let html = `
       <style>
         .stats-summary-grid {
@@ -3311,13 +3333,9 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
         }
 
         .stats-layout {
-          display: grid;
-          grid-template-columns: 1.2fr 1fr;
+          display: flex;
+          flex-direction: column;
           gap: 24px;
-          align-items: start;
-        }
-        @media (max-width: 1024px) {
-          .stats-layout { grid-template-columns: 1fr; }
         }
 
         .vbar-card, .donut-card {
@@ -3330,7 +3348,6 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
           flex-direction: column;
           box-sizing: border-box;
         }
-        .donut-card { align-items: center; }
 
         .vbar-svg {
           width: 100%;
@@ -3346,30 +3363,81 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
           opacity: 0.8;
         }
 
+        .donut-card-body {
+          display: grid;
+          grid-template-columns: minmax(220px, 300px) 1fr;
+          gap: 32px;
+          align-items: center;
+        }
+        @media (max-width: 640px) {
+          .donut-card-body { grid-template-columns: 1fr; justify-items: center; }
+        }
+
+        .donut-chart-col { display: flex; justify-content: center; }
         .donut-svg { margin: 12px 0; }
         .donut-segment { transition: opacity 0.15s ease; cursor: pointer; }
         .donut-segment:hover { opacity: 0.8; }
         .donut-center-text { font-family: var(--font-mono); fill: #F7F4EC; }
         .donut-center-sub { font-family: var(--font-family); fill: #B9C0D4; letter-spacing: 1px; }
 
-        .legend-list {
+        .city-accordion-list {
           width: 100%;
-          margin-top: 16px;
           display: flex;
           flex-direction: column;
           gap: 8px;
-          max-height: 220px;
+          max-height: 340px;
           overflow-y: auto;
         }
 
-        .legend-item {
-          display: flex;
+        .city-accordion { background: transparent; border: none; }
+
+        .city-accordion-summary {
+          cursor: pointer;
+          user-select: none;
+          list-style: none;
+          display: grid;
+          grid-template-columns: 1fr auto;
           align-items: center;
-          justify-content: space-between;
-          padding: 8px 12px;
+          gap: 12px;
+          padding: 10px 12px;
           border-radius: 6px;
           background: var(--bg-elevated);
           border: 1px solid var(--border-subtle, rgba(255,255,255,0.06));
+          transition: border-color 0.2s ease;
+        }
+        .city-accordion-summary::-webkit-details-marker { display: none; }
+        .city-accordion-summary:hover { border-color: var(--banner-color); }
+
+        .city-accordion-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 2px;
+          background: var(--banner-color);
+          flex-shrink: 0;
+        }
+        .city-accordion-name {
+          font-weight: 600;
+          color: #F7F4EC;
+          font-size: 0.85rem;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          min-width: 0;
+        }
+        .city-accordion-pct { font-family: var(--font-mono); font-weight: 700; color: #8B7FA0; font-size: 0.85rem; }
+
+        details.city-accordion[open] .accordion-chevron { transform: rotate(180deg); }
+
+        .city-accordion-detail {
+          display: flex;
+          justify-content: space-between;
+          gap: 12px;
+          padding: 10px 14px;
+          margin-top: 4px;
+          color: #B9C0D4;
+          font-family: var(--font-mono);
+          font-size: 0.8rem;
+          border-left: 2px solid var(--banner-color);
         }
 
         @keyframes donutDraw { from { stroke-dasharray: 0 ${circumference}; } }
@@ -3446,31 +3514,27 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
             </h3>
           </div>
 
-          <svg class="donut-svg" width="240" height="240" viewBox="0 0 260 260">
-            ${segments.map((s, i) => `
-              <circle class="donut-segment" cx="${cx}" cy="${cy}" r="${radius}" fill="none"
-                stroke="${s.color}" stroke-opacity="${s.opacity}" stroke-width="${stroke}"
-                stroke-dasharray="${s.dashLen} ${s.gap}"
-                stroke-dashoffset="${s.offset}"
-                style="animation: donutDraw 0.8s ease ${i * 0.08}s both;"
-                data-city="${s.city}">
-                <title>${s.city}: ${s.count} bulto${s.count > 1 ? 's' : ''} (${(s.pct * 100).toFixed(1)}%)</title>
-              </circle>
-            `).join('')}
-            <text x="${cx}" y="${cy - 6}" text-anchor="middle" class="donut-center-text" font-size="34" font-weight="700">${totalPkgs}</text>
-            <text x="${cx}" y="${cy + 18}" text-anchor="middle" class="donut-center-sub" font-size="11" font-weight="700" letter-spacing="2">PAQUETES</text>
-          </svg>
+          <div class="donut-card-body">
+            <div class="donut-chart-col">
+              <svg class="donut-svg" width="240" height="240" viewBox="0 0 260 260">
+                ${segments.map((s, i) => `
+                  <circle class="donut-segment" cx="${cx}" cy="${cy}" r="${radius}" fill="none"
+                    stroke="${s.color}" stroke-opacity="${s.opacity}" stroke-width="${stroke}"
+                    stroke-dasharray="${s.dashLen} ${s.gap}"
+                    stroke-dashoffset="${s.offset}"
+                    style="animation: donutDraw 0.8s ease ${i * 0.08}s both;"
+                    data-city="${s.city}">
+                    <title>${s.city}: ${s.count} bulto${s.count > 1 ? 's' : ''} (${(s.pct * 100).toFixed(1)}%)</title>
+                  </circle>
+                `).join('')}
+                <text x="${cx}" y="${cy - 6}" text-anchor="middle" class="donut-center-text" font-size="34" font-weight="700">${totalPkgs}</text>
+                <text x="${cx}" y="${cy + 18}" text-anchor="middle" class="donut-center-sub" font-size="11" font-weight="700" letter-spacing="2">PAQUETES</text>
+              </svg>
+            </div>
 
-          <div class="legend-list">
-            ${segments.map(s => `
-              <div class="legend-item">
-                <div style="display:flex; align-items:center; gap:8px;">
-                  <span style="width:8px; height:8px; border-radius:2px; background:${s.color}; opacity:${s.opacity};"></span>
-                  <span style="font-weight:600; color:#F7F4EC; font-size:0.82rem;">${s.city}</span>
-                </div>
-                <span style="font-family:var(--font-mono); font-weight:700; color:#8B7FA0; font-size:0.85rem;">${(s.pct * 100).toFixed(1)}%</span>
-              </div>
-            `).join('')}
+            <div class="city-accordion-list">
+              ${cityAccordionHTML}
+            </div>
           </div>
         </div>
       </div>`;
