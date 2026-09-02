@@ -3569,83 +3569,8 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
       }
 
       let html = `
-        <style>
-          .clients-table-wrapper { overflow-x: auto; }
-          .clients-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
-          .clients-table th {
-            padding: 12px 16px 10px 16px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: #B9C0D4;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            border-bottom: 1px solid var(--border-default, rgba(255,255,255,0.12));
-            text-align: left;
-          }
-          .clients-row td {
-            padding: 14px 16px;
-            vertical-align: middle;
-            background: var(--bg-elevated);
-            border-top: 1px solid var(--border-subtle, rgba(255,255,255,0.08));
-            border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.08));
-            transition: background 0.15s ease;
-          }
-          .clients-row td:first-child {
-            border-left: 1px solid var(--border-subtle, rgba(255,255,255,0.08));
-            border-top-left-radius: 8px;
-            border-bottom-left-radius: 8px;
-          }
-          .clients-row td:last-child {
-            border-right: 1px solid var(--border-subtle, rgba(255,255,255,0.08));
-            border-top-right-radius: 8px;
-            border-bottom-right-radius: 8px;
-            text-align: right;
-          }
-          .clients-row:hover td {
-            background: rgba(255, 255, 255, 0.04);
-          }
-
-          .badge-city-green {
-            background: rgba(92, 164, 127, 0.12);
-            border: 1.5px solid #5CA47F;
-            color: #5CA47F;
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 0.8rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-          }
-
-          .badge-role-dest {
-            background: rgba(127, 165, 204, 0.12);
-            border: 1.5px solid #7FA5CC;
-            color: #7FA5CC;
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 0.8rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-          }
-
-          .badge-role-exp {
-            background: rgba(212, 166, 76, 0.12);
-            border: 1.5px solid #D4A64C;
-            color: #D4A64C;
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 0.8rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-          }
-        </style>
-        <div class="clients-table-wrapper">
-          <table class="clients-table">
+        <div style="overflow-x: auto;">
+          <table class="data-table">
             <thead>
               <tr>
                 <th>Nombre del Cliente</th>
@@ -3656,10 +3581,10 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
             </thead>
             <tbody>
               ${clients.map(c => `
-                <tr class="clients-row">
-                  <td style="font-weight:700; color:#F7F4EC; font-size:0.92rem;">${_esc(c.name)}</td>
-                  <td><span class="badge-city-green"><i data-lucide="map-pin" style="width:13px;height:13px;"></i> ${_esc(c.city)}</span></td>
-                  <td><span class="${c.role === 'Expedidor' ? 'badge-role-exp' : 'badge-role-dest'}">${_esc(c.role || 'Cliente')}</span></td>
+                <tr>
+                  <td style="font-weight:700; font-size:0.92rem;">${_esc(c.name)}</td>
+                  <td><span class="badge--city"><i data-lucide="map-pin" style="width:13px;height:13px;"></i> ${_esc(c.city)}</span></td>
+                  <td><span class="${c.role === 'Expedidor' ? 'badge--warning' : 'badge--info'}">${_esc(c.role || 'Cliente')}</span></td>
                   <td>
                     <button class="action-btn-danger delete-client-btn" data-id="${c.id}" title="Eliminar de la agenda">
                       <i data-lucide="trash-2" style="width:16px;height:16px"></i>
