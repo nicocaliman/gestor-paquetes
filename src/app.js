@@ -3072,6 +3072,12 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
     document.getElementById('clients-search-input')?.addEventListener('input', () => {
       renderClientsView();
     });
+    document.getElementById('clients-role-filter')?.addEventListener('click', (e) => {
+      const btn = e.target.closest('.client-role-filter__btn');
+      if (!btn) return;
+      document.querySelectorAll('.client-role-filter__btn').forEach(b => b.classList.toggle('active', b === btn));
+      renderClientsView();
+    });
 
     // ── Iconos de búsqueda que hacen morph lupa↔X (morphicons) ─────
     // El propio icono de lupa es el botón de limpiar: al escribir se transforma
@@ -3606,58 +3612,149 @@ let weatherService = { getCities: () => [], addCityByName: async () => {}, remov
       }
     });
 
+    function getClientDirectoryStats(pkgs) {
+      const statsByName = {};
+      pkgs.forEach(p => {
+        [p.destinatario, p.expedidor].forEach(rawName => {
+          if (!rawName) return;
+          const key = rawName.trim().toLowerCase();
+          if (!key) return;
+          const s = statsByName[key] || (statsByName[key] = { count: 0, bultos: 0, last: null });
+          s.count += 1;
+          s.bultos += parseInt(p.bultos) || 1;
+          const created = p.createdAt ? new Date(p.createdAt) : null;
+          if (created && !isNaN(created) && (!s.last || created > s.last)) s.last = created;
+        });
+      });
+      return statsByName;
+    }
+
     function renderClientsView() {
       const container = document.getElementById('clients-table-container');
       if (!container) return;
 
       syncClientsFromPackages(StorageService.getPackages());
+      const hasAnyClients = StorageService.getClients().length > 0;
       let clients = StorageService.getClients();
       const filter = (document.getElementById('clients-search-input')?.value || '').trim().toLowerCase();
+      const roleFilter = document.querySelector('.client-role-filter__btn.active')?.dataset.role || 'all';
 
       if (filter) {
         clients = clients.filter(c => c.name.toLowerCase().includes(filter) || c.city.toLowerCase().includes(filter));
       }
+      if (roleFilter !== 'all') {
+        clients = clients.filter(c => (c.role || 'Destinatario') === roleFilter);
+      }
 
       if (clients.length === 0) {
+        const title = hasAnyClients ? 'Ningún cliente coincide con el filtro' : 'No hay clientes guardados aún';
+        const subtitle = hasAnyClients ? 'Probá con otro nombre, localidad o rol.' : 'Se guardarán automáticamente al crear envíos.';
         container.innerHTML = `
           <div class="empty-state" style="margin-top:0; border:none; background:transparent; box-shadow:none; padding:48px 20px;">
             <div class="empty-state__icon" style="color:var(--text-muted); opacity:0.4; margin-bottom:12px; display:flex; justify-content:center; align-items:center;">
               <i data-lucide="users" style="width:48px;height:48px;"></i>
             </div>
-            <h3 style="font-size:1.1rem;font-weight:700;color:var(--text-primary);margin-bottom:6px;text-align:center;">No hay clientes guardados aún</h3>
-            <p style="font-size:clamp(0.62rem, 2.8vw, 0.85rem);color:var(--text-secondary);white-space:nowrap;margin:0 auto;text-align:center;line-height:1.5;max-width:100%;">Se guardarán automáticamente al crear envíos.</p>
+            <h3 style="font-size:1.1rem;font-weight:700;color:var(--text-primary);margin-bottom:6px;text-align:center;">${title}</h3>
+            <p style="font-size:clamp(0.62rem, 2.8vw, 0.85rem);color:var(--text-secondary);white-space:nowrap;margin:0 auto;text-align:center;line-height:1.5;max-width:100%;">${subtitle}</p>
           </div>
         `;
         lucide.createIcons({ nodes: [container] });
         return;
       }
 
+      const statsByName = getClientDirectoryStats(StorageService.getPackages());
+
       let html = `
-        <div style="overflow-x: auto;">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Nombre del Cliente</th>
-                <th>Ciudad / Localidad</th>
-                <th>Tipo</th>
-                <th style="text-align:right;">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${clients.map(c => `
-                <tr>
-                  <td style="font-weight:700; font-size:0.92rem;">${_esc(c.name)}</td>
-                  <td><span class="badge--city"><i data-lucide="map-pin" style="width:13px;height:13px;"></i> ${_esc(c.city)}</span></td>
-                  <td><span class="${c.role === 'Expedidor' ? 'badge--warning' : 'badge--info'}">${_esc(c.role || 'Cliente')}</span></td>
-                  <td>
-                    <button class="action-btn-danger delete-client-btn" data-id="${c.id}" title="Eliminar de la agenda">
-                      <i data-lucide="trash-2" style="width:16px;height:16px"></i>
-                    </button>
-                  </td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
+        <style>
+          .client-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+          }
+          .client-card {
+            position: relative;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-default);
+            border-top: 3px solid var(--client-accent, var(--brand-primary));
+            border-radius: var(--radius-lg);
+            padding: 18px 18px 16px;
+            box-shadow: var(--shadow-sm);
+            opacity: 0;
+            transform: scale(0.95);
+            animation: clientCardIn 200ms ease-out forwards;
+            transition: transform 150ms ease-out, border-color 150ms ease, box-shadow 150ms ease-out;
+          }
+          @keyframes clientCardIn { to { opacity: 1; transform: scale(1); } }
+          @media (hover: hover) and (pointer: fine) {
+            .client-card:hover {
+              transform: translateY(-2px);
+              box-shadow: var(--shadow-md);
+              border-color: color-mix(in srgb, var(--brand-primary) 50%, var(--border-default));
+            }
+          }
+          .client-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+          .client-card__id { display: flex; align-items: center; gap: 10px; min-width: 0; }
+          .client-card__avatar {
+            flex-shrink: 0;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            background: color-mix(in srgb, var(--brand-primary) 16%, transparent);
+            border: 1.5px solid color-mix(in srgb, var(--brand-primary) 55%, transparent);
+            color: var(--brand-primary);
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 0.95rem;
+          }
+          .client-card__name {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 0.98rem;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .client-card .action-btn-danger { padding: 5px 8px; flex-shrink: 0; }
+          .client-card .action-btn-danger:active { transform: scale(0.97); }
+          .client-card__badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+          .client-card__divider { border-top: 1px solid var(--border-subtle); margin: 0 0 10px; }
+          .client-card__stats { font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary); }
+          .client-card__stats strong { color: var(--text-primary); font-weight: 700; }
+          .client-card__last { margin-top: 6px; font-size: 0.74rem; color: var(--text-muted); }
+          @media (prefers-reduced-motion: reduce) {
+            .client-card { animation: none; opacity: 1; transform: none; }
+          }
+        </style>
+        <div class="client-grid">
+          ${clients.map((c, i) => {
+            const isExp = c.role === 'Expedidor';
+            const s = statsByName[c.name.trim().toLowerCase()] || { count: 0, bultos: 0, last: null };
+            const initial = (c.name.trim()[0] || '?').toUpperCase();
+            const accentVar = isExp ? 'var(--status-pending-text)' : 'var(--status-transit-text)';
+            const lastLabel = s.last ? s.last.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Sin envíos registrados';
+            const delay = Math.min(i, 11) * 40;
+            return `
+              <div class="client-card" style="--client-accent:${accentVar}; animation-delay:${delay}ms;">
+                <div class="client-card__head">
+                  <div class="client-card__id">
+                    <div class="client-card__avatar">${_esc(initial)}</div>
+                    <span class="client-card__name" title="${_esc(c.name)}">${_esc(c.name)}</span>
+                  </div>
+                  <button class="action-btn-danger delete-client-btn" data-id="${c.id}" title="Eliminar de la agenda">
+                    <i data-lucide="trash-2" style="width:14px;height:14px"></i>
+                  </button>
+                </div>
+                <div class="client-card__badges">
+                  <span class="badge--city"><i data-lucide="map-pin" style="width:12px;height:12px;"></i> ${_esc(c.city)}</span>
+                  <span class="${isExp ? 'badge--warning' : 'badge--info'}">${_esc(c.role || 'Cliente')}</span>
+                </div>
+                <div class="client-card__divider"></div>
+                <div class="client-card__stats"><strong>${s.count}</strong> envío${s.count === 1 ? '' : 's'} &nbsp;·&nbsp; <strong>${s.bultos}</strong> bulto${s.bultos === 1 ? '' : 's'}</div>
+                <div class="client-card__last">Último envío: ${lastLabel}</div>
+              </div>
+            `;
+          }).join('')}
         </div>
       `;
 
